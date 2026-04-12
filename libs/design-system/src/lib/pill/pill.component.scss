@@ -1,0 +1,50 @@
+// ─── Pill ─────────────────────────────────────────────────────────────────────
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-1);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+
+  // Typography
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-xs);
+  font-weight: var(--ds-weight-semibold);
+  line-height: 1;
+
+  // Shape
+  padding: var(--ds-space-2) var(--ds-space-4);
+  border-radius: var(--ds-radius-full);
+  border: 1px solid var(--ds-color-border);
+
+  // Default (inactive) state
+  background: var(--ds-color-bg-elevated);
+  color: var(--ds-color-text-secondary);
+
+  // Transition
+  transition:
+    background-color var(--ds-duration-fast) var(--ds-easing-default),
+    border-color     var(--ds-duration-fast) var(--ds-easing-default),
+    color            var(--ds-duration-fast) var(--ds-easing-default);
+}
+
+// Hover — only when not active
+:host(:hover:not(.ds-pill--active)) {
+  border-color: var(--ds-color-brand);
+  color: var(--ds-color-text-primary);
+}
+
+// Focus ring
+:host(:focus-visible) {
+  outline: 2px solid var(--ds-color-brand);
+  outline-offset: 2px;
+}
+
+// Active state
+:host(.ds-pill--active) {
+  background: var(--ds-color-brand-muted);
+  border-color: var(--ds-color-brand);
+  color: var(--ds-color-brand);
+}

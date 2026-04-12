@@ -1,0 +1,12 @@
+// ─── Token barrel ─────────────────────────────────────────────────────────────
+// Import order matters: colors first so later tokens can reference them.
+// Component SCSS files should @use this file:
+//   @use '@kick/design-system/tokens' as ds;
+// ─────────────────────────────────────────────────────────────────────────────
+
+@forward 'colors';
+@forward 'typography';
+@forward 'spacing';
+@forward 'radius';
+@forward 'shadows';
+@forward 'motion';

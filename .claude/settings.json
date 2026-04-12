@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); [print\\(k,v\\) for k,v in d.get\\('exports',{}\\).items\\(\\)]\")",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('node_modules/storybook/package.json'\\)\\); deps = {**d.get\\('dependencies',{}\\), **d.get\\('peerDependencies',{}\\)}; [print\\(k,v\\) for k,v in deps.items\\(\\) if 'doc' in k.lower\\(\\) or 'block' in k.lower\\(\\) or 'addon' in k.lower\\(\\)]\")",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('node_modules/storybook/package.json'\\)\\); print\\(list\\(d.keys\\(\\)\\)\\)\")"
+    ]
+  }
+}

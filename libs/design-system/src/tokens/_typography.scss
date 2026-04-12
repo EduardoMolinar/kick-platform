@@ -1,0 +1,40 @@
+// ─── Typography Tokens ───────────────────────────────────────────────────────
+// Scale is intentionally small — 8 steps covers every case in the product.
+// Scores and large numerics always use weight-black + letter-spacing-tight.
+// Section labels always use weight-bold + text-transform-uppercase.
+// ─────────────────────────────────────────────────────────────────────────────
+
+:root {
+  // Font families
+  --ds-font-sans:   'Inter', 'Segoe UI', system-ui, sans-serif;
+  --ds-font-mono:   'JetBrains Mono', 'Fira Code', monospace;
+
+  // Size scale (named by role, not by number)
+  --ds-text-xs:     11px;   // section labels, badge text, form hints
+  --ds-text-sm:     13px;   // competition name, team name in card, table cells
+  --ds-text-base:   15px;   // body text, descriptions, list items
+  --ds-text-md:     17px;   // card titles, prominent labels
+  --ds-text-lg:     20px;   // team names, section headings
+  --ds-text-xl:     24px;   // page headings, competition names
+  --ds-text-2xl:    30px;   // hero scores (compact)
+  --ds-text-3xl:    38px;   // hero scores (featured match / live)
+
+  // Weight scale
+  --ds-weight-regular:  400;
+  --ds-weight-medium:   500;
+  --ds-weight-semibold: 600;
+  --ds-weight-bold:     700;
+  --ds-weight-black:    900;
+
+  // Leading (line-height)
+  --ds-leading-tight:   1.1;   // scores, large numerics
+  --ds-leading-snug:    1.3;   // headings
+  --ds-leading-base:    1.5;   // body
+  --ds-leading-relaxed: 1.7;   // long-form text
+
+  // Tracking (letter-spacing)
+  --ds-tracking-tight:  -0.03em;  // large scores
+  --ds-tracking-normal:  0;
+  --ds-tracking-wide:    0.06em;  // badges, section labels
+  --ds-tracking-wider:   0.10em;  // ALL CAPS labels
+}

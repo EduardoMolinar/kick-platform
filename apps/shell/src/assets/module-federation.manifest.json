@@ -1,0 +1,7 @@
+{
+  "mfe-home":        "http://localhost:4201/remoteEntry.mjs",
+  "mfe-live":        "http://localhost:4202/remoteEntry.mjs",
+  "mfe-competition": "http://localhost:4203/remoteEntry.mjs",
+  "mfe-team":        "http://localhost:4204/remoteEntry.mjs",
+  "mfe-profile":     "http://localhost:4205/remoteEntry.mjs"
+}

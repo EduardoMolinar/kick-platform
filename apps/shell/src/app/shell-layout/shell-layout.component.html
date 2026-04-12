@@ -1,0 +1,45 @@
+<!-- ── Sidebar ─────────────────────────────────────────────────────────────── -->
+<nav class="sidebar" role="navigation" aria-label="Main navigation">
+  <div class="sidebar__logo" aria-hidden="true">
+    <span class="sidebar__logo-mark">K</span>
+    <span class="sidebar__logo-text">Kick</span>
+  </div>
+
+  <ul class="sidebar__nav" role="list">
+    <li
+      *ngFor="let item of navItems"
+      class="sidebar__nav-item">
+      <a
+        class="sidebar__nav-link"
+        [routerLink]="item.path"
+        routerLinkActive="sidebar__nav-link--active"
+        [attr.aria-current]="null">
+        <ds-icon [name]="item.icon" size="sm"></ds-icon>
+        <span class="sidebar__nav-label">{{ item.label }}</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<!-- ── Topbar ──────────────────────────────────────────────────────────────── -->
+<header class="topbar" role="banner">
+  <div class="topbar__actions">
+    <button class="topbar__action-btn" type="button" aria-label="Search">
+      <ds-icon name="search" size="sm"></ds-icon>
+    </button>
+    <button class="topbar__action-btn" type="button" aria-label="Notifications">
+      <ds-icon name="bell" size="sm"></ds-icon>
+    </button>
+    <ds-avatar
+      *ngIf="auth.isAuthenticated()"
+      [initials]="userInitials()"
+      size="sm"
+      [attr.aria-label]="'Account: ' + userInitials()">
+    </ds-avatar>
+  </div>
+</header>
+
+<!-- ── Content ─────────────────────────────────────────────────────────────── -->
+<main class="content" role="main">
+  <router-outlet></router-outlet>
+</main>

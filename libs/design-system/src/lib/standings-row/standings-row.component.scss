@@ -1,0 +1,111 @@
+// ─── Standings Row ────────────────────────────────────────────────────────────
+// Grid: zone-dot | pos | team-name | P | W | D | L | GD | Pts | form
+// ─────────────────────────────────────────────────────────────────────────────
+
+:host {
+  display: grid;
+  // zone | pos | team              | P   W   D   L  | GD  | Pts | form
+  grid-template-columns:
+    4px 1.5rem minmax(0, 1fr) repeat(4, 2rem) 2.5rem 2.5rem 5rem;
+  align-items: center;
+  gap: 0 var(--ds-space-2);
+  padding: var(--ds-space-2) var(--ds-space-3);
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-xs);
+  color: var(--ds-color-text-secondary);
+  border-bottom: 1px solid var(--ds-color-border-subtle);
+  transition: background-color var(--ds-duration-fast) var(--ds-easing-default);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--ds-color-bg-elevated);
+    cursor: default;
+  }
+}
+
+// ── Highlighted row (user's followed team) ────────────────────────────────────
+:host(.ds-standings-row--highlighted) {
+  background: var(--ds-color-brand-muted);
+  box-shadow: inset 3px 0 0 var(--ds-color-brand);
+
+  .ds-standings-row__team,
+  .ds-standings-row__stat--pts {
+    color: var(--ds-color-text-primary);
+    font-weight: var(--ds-weight-bold);
+  }
+}
+
+// ── Zone dot ──────────────────────────────────────────────────────────────────
+.ds-standings-row__zone {
+  display: flex;
+  align-items: center;
+}
+
+.ds-standings-row__zone-dot {
+  width: 3px;
+  height: 24px;
+  border-radius: 2px;
+
+  &--cl  { background: var(--ds-color-zone-cl); }
+  &--uel { background: var(--ds-color-zone-uel); }
+  &--rel { background: var(--ds-color-zone-rel); }
+}
+
+// ── Position ──────────────────────────────────────────────────────────────────
+.ds-standings-row__pos {
+  font-size: var(--ds-text-xs);
+  color: var(--ds-color-text-muted);
+  text-align: center;
+}
+
+// ── Team name ─────────────────────────────────────────────────────────────────
+.ds-standings-row__team {
+  font-size: var(--ds-text-sm);
+  font-weight: var(--ds-weight-medium);
+  color: var(--ds-color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ── Stat cells ────────────────────────────────────────────────────────────────
+.ds-standings-row__stat {
+  text-align: center;
+
+  &--gd {
+    color: var(--ds-color-text-muted);
+  }
+
+  &--pts {
+    font-weight: var(--ds-weight-bold);
+    color: var(--ds-color-text-primary);
+  }
+}
+
+// ── Form strip ────────────────────────────────────────────────────────────────
+.ds-standings-row__form {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+}
+
+.ds-standings-row__form-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  font-size: 8px;
+  font-weight: var(--ds-weight-bold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  // Generate W/D/L colors from semantic tokens
+  &--w { background: var(--ds-color-win);  color: var(--ds-color-text-inverse); }
+  &--d { background: var(--ds-color-draw); opacity: 0.5; color: var(--ds-color-text-primary); }
+  &--l { background: var(--ds-color-loss); color: var(--ds-color-text-inverse); }
+}

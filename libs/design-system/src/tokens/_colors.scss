@@ -1,0 +1,46 @@
+// ─── Color Tokens ───────────────────────────────────────────────────────────
+// All values are defined as CSS custom properties so they are themeable at
+// runtime without a rebuild.  Component styles consume them via var().
+//
+// Naming convention: --ds-color-<role>[-<modifier>]
+// ─────────────────────────────────────────────────────────────────────────────
+
+:root {
+  // Background scale — layered from deepest (base) to most elevated (overlay)
+  --ds-color-bg-base:         #0d0f14;
+  --ds-color-bg-surface:      #161920;
+  --ds-color-bg-elevated:     #1e2230;
+  --ds-color-bg-overlay:      #252a3a;
+
+  // Border
+  --ds-color-border:          #2a2f42;
+  --ds-color-border-subtle:   #1c1f2e;
+
+  // Brand
+  --ds-color-brand:           #00e676;
+  --ds-color-brand-dim:       #00c962;
+  --ds-color-brand-muted:     rgba(0, 230, 118, 0.10);
+
+  // Accent — used for away team stats, secondary data series, amber alerts
+  --ds-color-accent-blue:     #3d8ef8;
+  --ds-color-accent-amber:    #f5a623;
+  --ds-color-accent-red:      #f25555;
+
+  // Text
+  --ds-color-text-primary:    #f0f2f7;
+  --ds-color-text-secondary:  #8b93a8;
+  --ds-color-text-muted:      #525870;
+  --ds-color-text-inverse:    #0d0f14;   // on brand / light backgrounds
+
+  // Semantic — match state
+  --ds-color-live:            #f25555;
+  --ds-color-live-bg:         rgba(242, 85, 85, 0.12);
+  --ds-color-win:             #00e676;
+  --ds-color-loss:            #f25555;
+  --ds-color-draw:            #8b93a8;
+
+  // Semantic — competition zones
+  --ds-color-zone-cl:         #00e676;   // Champions League qualification
+  --ds-color-zone-uel:        #f5a623;   // Europa League qualification
+  --ds-color-zone-rel:        #f25555;   // Relegation
+}

@@ -1,0 +1,182 @@
+// ── Shell layout grid ──────────────────────────────────────────────────────────
+//
+// Columns: sidebar (240 px) | 1fr main area
+// Rows:    topbar (60 px)   | 1fr content
+//
+//  ┌──────────┬─────────────────────────┐
+//  │          │  topbar                 │
+//  │ sidebar  ├─────────────────────────┤
+//  │          │  content (router-outlet)│
+//  └──────────┴─────────────────────────┘
+//
+// At ≤ 860 px the sidebar collapses to icon-only width (64 px) and labels hide.
+
+:host {
+  display: grid;
+  grid-template-columns: var(--shell-sidebar-width, 240px) 1fr;
+  grid-template-rows: var(--shell-topbar-height, 60px) 1fr;
+  grid-template-areas:
+    'sidebar topbar'
+    'sidebar content';
+  height: 100vh;
+  overflow: hidden;
+}
+
+// ── Sidebar ────────────────────────────────────────────────────────────────────
+
+.sidebar {
+  grid-area: sidebar;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-6);
+  padding: var(--ds-space-5) var(--ds-space-4);
+  background-color: var(--ds-color-bg-surface);
+  border-right: 1px solid var(--ds-color-border-subtle);
+  overflow-y: auto;
+}
+
+.sidebar__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  padding: 0 var(--ds-space-2);
+}
+
+.sidebar__logo-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ds-radius-md);
+  background-color: var(--ds-color-brand);
+  color: #fff;
+  font-weight: var(--ds-weight-bold);
+  font-size: var(--ds-text-sm);
+  flex-shrink: 0;
+}
+
+.sidebar__logo-text {
+  font-weight: var(--ds-weight-bold);
+  font-size: var(--ds-text-lg);
+  color: var(--ds-color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-1);
+  list-style: none;
+}
+
+.sidebar__nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-2) var(--ds-space-3);
+  border-radius: var(--ds-radius-md);
+  color: var(--ds-color-text-secondary);
+  text-decoration: none;
+  font-size: var(--ds-text-sm);
+  font-weight: var(--ds-weight-medium);
+  transition: background-color var(--ds-duration-fast) ease,
+              color var(--ds-duration-fast) ease;
+
+  &:hover {
+    background-color: var(--ds-color-bg-hover);
+    color: var(--ds-color-text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ds-color-brand);
+    outline-offset: 2px;
+  }
+
+  &--active {
+    background-color: var(--ds-color-brand-subtle);
+    color: var(--ds-color-brand);
+    font-weight: var(--ds-weight-semibold);
+  }
+}
+
+.sidebar__nav-label {
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+// ── Topbar ─────────────────────────────────────────────────────────────────────
+
+.topbar {
+  grid-area: topbar;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 var(--ds-space-5);
+  background-color: var(--ds-color-bg-base);
+  border-bottom: 1px solid var(--ds-color-border-subtle);
+}
+
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
+}
+
+.topbar__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--ds-radius-full);
+  background: transparent;
+  color: var(--ds-color-text-secondary);
+  cursor: pointer;
+  transition: background-color var(--ds-duration-fast) ease,
+              color var(--ds-duration-fast) ease;
+
+  &:hover {
+    background-color: var(--ds-color-bg-hover);
+    color: var(--ds-color-text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--ds-color-brand);
+    outline-offset: 2px;
+  }
+}
+
+// ── Content ────────────────────────────────────────────────────────────────────
+
+.content {
+  grid-area: content;
+  overflow-y: auto;
+  padding: var(--ds-space-6);
+  background-color: var(--ds-color-bg-base);
+}
+
+// ── Collapsed sidebar at narrow viewports ──────────────────────────────────────
+
+@media (max-width: 860px) {
+  :host {
+    grid-template-columns: var(--shell-sidebar-collapsed-width, 64px) 1fr;
+  }
+
+  .sidebar__logo-text,
+  .sidebar__nav-label {
+    display: none;
+  }
+
+  .sidebar__nav-link {
+    justify-content: center;
+    padding: var(--ds-space-2);
+  }
+
+  .sidebar__logo {
+    justify-content: center;
+    padding: 0;
+  }
+}

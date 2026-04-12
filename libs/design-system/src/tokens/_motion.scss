@@ -1,0 +1,37 @@
+// ─── Motion Tokens ────────────────────────────────────────────────────────────
+// All interactive elements must respect prefers-reduced-motion.
+// Use fast for micro-interactions (hover, toggle), base for transitions,
+// slow for page-level or data-loading transitions.
+// ─────────────────────────────────────────────────────────────────────────────
+
+:root {
+  --ds-duration-instant: 0ms;
+  --ds-duration-fast:    120ms;
+  --ds-duration-base:    200ms;
+  --ds-duration-slow:    350ms;
+
+  --ds-easing-default:    cubic-bezier(0.4, 0, 0.2, 1);   // material standard
+  --ds-easing-decelerate: cubic-bezier(0, 0, 0.2, 1);     // entering elements
+  --ds-easing-accelerate: cubic-bezier(0.4, 0, 1, 1);     // leaving elements
+  --ds-easing-spring:     cubic-bezier(0.34, 1.56, 0.64, 1); // toggle thumb
+}
+
+// Respect reduced motion globally.
+// Components should also guard their own keyframes with this mixin.
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+// Live pulse animation used by the live badge.
+// Defined here so it is available from the global stylesheet.
+@keyframes ds-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.25; }
+}
+
+@keyframes ds-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}

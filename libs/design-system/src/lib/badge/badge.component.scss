@@ -1,0 +1,62 @@
+// ─── Badge ────────────────────────────────────────────────────────────────────
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-1);
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-xs);
+  font-weight: var(--ds-weight-bold);
+  letter-spacing: var(--ds-tracking-wide);
+  text-transform: uppercase;
+  line-height: 1;
+  padding: 2px var(--ds-space-2);
+  border-radius: var(--ds-radius-full);
+  white-space: nowrap;
+}
+
+// ── Variant: live ─────────────────────────────────────────────────────────────
+:host(.ds-badge--live) {
+  background: var(--ds-color-live-bg);
+  color: var(--ds-color-live);
+}
+
+.ds-badge__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+  animation: ds-pulse 1.4s ease-in-out infinite;
+
+  // Respect reduced-motion — animation is disabled globally in global.scss
+  // but the keyframe fallback (no animation) still shows the dot.
+}
+
+// ── Variant: comp ─────────────────────────────────────────────────────────────
+:host(.ds-badge--comp) {
+  background: var(--ds-color-bg-elevated);
+  color: var(--ds-color-text-secondary);
+}
+
+// ── Variant: result (FT, AET, PSO) ───────────────────────────────────────────
+:host(.ds-badge--result) {
+  background: var(--ds-color-bg-elevated);
+  color: var(--ds-color-text-muted);
+}
+
+// ── Variant: competition zone indicators ──────────────────────────────────────
+:host(.ds-badge--zone-cl) {
+  background: var(--ds-color-brand-muted);
+  color: var(--ds-color-zone-cl);
+}
+
+:host(.ds-badge--zone-uel) {
+  background: rgba(245, 166, 35, 0.12);
+  color: var(--ds-color-zone-uel);
+}
+
+:host(.ds-badge--zone-rel) {
+  background: var(--ds-color-live-bg);
+  color: var(--ds-color-zone-rel);
+}

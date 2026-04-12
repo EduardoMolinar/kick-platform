@@ -1,0 +1,48 @@
+<!-- ─── Match Score ──────────────────────────────────────────────────────────── -->
+
+<!-- Meta row: competition label + match state badge -->
+@if (competition || status === 'live' || status === 'finished') {
+  <div class="ds-match-score__meta">
+    @if (competition) {
+      <span class="ds-match-score__competition">{{ competition }}</span>
+    }
+
+    @if (status === 'live') {
+      <ds-badge variant="live">
+        LIVE{{ minute ? ' ' + minuteLabel : '' }}
+      </ds-badge>
+    }
+
+    @if (status === 'finished') {
+      <span class="ds-match-score__result-label">FT</span>
+    }
+  </div>
+}
+
+<!-- Teams + score row -->
+<div
+  class="ds-match-score__body"
+  role="img"
+  [attr.aria-label]="scoreAriaLabel">
+
+  <!-- Home team -->
+  <span class="ds-match-score__team ds-match-score__team--home">
+    {{ homeTeam }}
+  </span>
+
+  <!-- Score block -->
+  <div class="ds-match-score__score" aria-hidden="true">
+    @if (showScore) {
+      <span class="ds-match-score__goal">{{ homeScore }}</span>
+      <span class="ds-match-score__separator">–</span>
+      <span class="ds-match-score__goal">{{ awayScore }}</span>
+    } @else {
+      <span class="ds-match-score__time">vs</span>
+    }
+  </div>
+
+  <!-- Away team -->
+  <span class="ds-match-score__team ds-match-score__team--away">
+    {{ awayTeam }}
+  </span>
+</div>

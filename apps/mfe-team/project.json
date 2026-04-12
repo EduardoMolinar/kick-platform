@@ -1,0 +1,85 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "mfe-team",
+  "projectType": "application",
+  "sourceRoot": "apps/mfe-team/src",
+  "prefix": "app",
+  "tags": ["scope:mfe-team"],
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:webpack-browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/mfe-team",
+        "index": "apps/mfe-team/src/index.html",
+        "main": "apps/mfe-team/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/mfe-team/tsconfig.app.json",
+        "assets": ["apps/mfe-team/src/favicon.ico"],
+        "styles": [
+          "libs/design-system/src/styles/global.scss",
+          "apps/mfe-team/src/styles.scss"
+        ],
+        "scripts": [],
+        "customWebpackConfig": {
+          "path": "apps/mfe-team/webpack.config.js"
+        }
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@nx/angular:webpack-dev-server",
+      "options": {
+        "buildTarget": "mfe-team:build",
+        "port": 4204
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "mfe-team:build:production"
+        },
+        "development": {
+          "buildTarget": "mfe-team:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "options": {
+        "lintFilePatterns": ["apps/mfe-team/**/*.ts", "apps/mfe-team/**/*.html"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/mfe-team/jest.config.ts"
+      }
+    }
+  }
+}

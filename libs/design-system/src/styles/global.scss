@@ -1,0 +1,76 @@
+// ─── Global Styles ────────────────────────────────────────────────────────────
+// This file is the single entry point for consuming apps and Storybook.
+// It loads all tokens (which inject CSS custom properties onto :root) and
+// applies a minimal set of opinionated base styles.
+//
+// Usage in angular.json / project.json:
+//   "styles": ["libs/design-system/src/styles/global.scss"]
+//
+// Usage in Storybook preview.ts:
+//   import '../styles/global.scss';
+// ─────────────────────────────────────────────────────────────────────────────
+
+// 1. Tokens — CSS custom properties on :root
+@use '../tokens/colors';
+@use '../tokens/typography';
+@use '../tokens/spacing';
+@use '../tokens/radius';
+@use '../tokens/shadows';
+@use '../tokens/motion';
+
+// 2. Box model reset
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+// 3. Base document
+html {
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+  tab-size: 2;
+}
+
+body {
+  font-family: var(--ds-font-sans);
+  font-size: var(--ds-text-base);
+  font-weight: var(--ds-weight-regular);
+  line-height: var(--ds-leading-base);
+  color: var(--ds-color-text-primary);
+  background-color: var(--ds-color-bg-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// 4. Focus ring — global fallback.
+// Components define their own :focus-visible styles, but this catches anything
+// that doesn't.
+:focus-visible {
+  outline: 2px solid var(--ds-color-brand);
+  outline-offset: 2px;
+}
+
+// 5. Media elements
+img,
+video,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+// 6. Reduced motion — disable all transitions/animations for users who request
+// it. Individual components do NOT need to repeat this; the global rule handles
+// everything.
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

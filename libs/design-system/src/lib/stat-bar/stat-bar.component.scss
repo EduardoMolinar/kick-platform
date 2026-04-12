@@ -1,0 +1,81 @@
+// ─── Stat Bar ─────────────────────────────────────────────────────────────────
+// Five-column grid: home-value | home-bar | label | away-bar | away-value
+// ─────────────────────────────────────────────────────────────────────────────
+
+:host {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr 6rem 1fr 2.5rem;
+  align-items: center;
+  gap: var(--ds-space-2);
+  width: 100%;
+  font-family: var(--ds-font-sans);
+  padding: var(--ds-space-1) 0;
+}
+
+// ── Value labels ──────────────────────────────────────────────────────────────
+.ds-stat-bar__value {
+  font-size: var(--ds-text-xs);
+  font-weight: var(--ds-weight-bold);
+  color: var(--ds-color-text-primary);
+  line-height: 1;
+
+  &--home { text-align: right; }
+  &--away { text-align: left; }
+}
+
+// ── Label (centre) ────────────────────────────────────────────────────────────
+.ds-stat-bar__label {
+  font-size: var(--ds-text-xs);
+  color: var(--ds-color-text-muted);
+  text-align: center;
+  font-weight: var(--ds-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ── Track ─────────────────────────────────────────────────────────────────────
+.ds-stat-bar__track {
+  display: flex;
+  align-items: center;
+  height: 4px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: var(--ds-color-bg-overlay);
+
+  // Home track: bar grows from the right edge inward (right-aligned)
+  &:not(.ds-stat-bar__track--away) {
+    flex-direction: row-reverse;
+  }
+}
+
+// ── Bars ──────────────────────────────────────────────────────────────────────
+// Home bar (in the home track, right-aligned) — brand color
+.ds-stat-bar__bar--home {
+  height: 100%;
+  background: var(--ds-color-brand);
+  border-radius: 2px;
+  transition: width var(--ds-duration-base) var(--ds-easing-default);
+}
+
+// Away bar placeholder in the home track (fills the remainder)
+.ds-stat-bar__bar--away {
+  height: 100%;
+  background: transparent;
+  flex: 1;
+}
+
+// Away track: bar grows from the left edge — accent blue
+.ds-stat-bar__bar--away-fill {
+  height: 100%;
+  background: var(--ds-color-accent-blue);
+  border-radius: 2px;
+  transition: width var(--ds-duration-base) var(--ds-easing-default);
+}
+
+// Home bar placeholder in the away track
+.ds-stat-bar__bar--home-fill {
+  height: 100%;
+  background: transparent;
+  flex: 1;
+}
