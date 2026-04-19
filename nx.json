@@ -1,60 +1,46 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "affected": {
-    "defaultBase": "main"
-  },
+  "useInferencePlugins": false,
+  "defaultBase": "main",
   "targetDefaults": {
-    "build": {
+    "@angular/build:application": {
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "inputs": ["default", "^default"]
     },
-    "test": {
+    "@nx/eslint:lint": {
       "cache": true,
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.eslintrc.json",
+        "{workspaceRoot}/.eslintignore",
+        "{workspaceRoot}/eslint.config.mjs"
+      ]
     },
-    "lint": {
+    "@nx/jest:jest": {
       "cache": true,
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
-    },
-    "storybook": {
-      "cache": false
-    },
-    "build-storybook": {
-      "cache": true,
-      "inputs": ["default", "^production"]
+      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"],
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
     }
   },
-  "namedInputs": {
-    "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "sharedGlobals": [],
-    "production": [
-      "default",
-      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
-      "!{projectRoot}/tsconfig.spec.json",
-      "!{projectRoot}/jest.config.[jt]s",
-      "!{projectRoot}/.storybook/**/*",
-      "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)"
-    ]
+  "workspaceLayout": {
+    "appsDir": "frontend/apps",
+    "libsDir": "frontend/libs"
   },
   "generators": {
     "@nx/angular:application": {
-      "style": "scss",
+      "e2eTestRunner": "none",
       "linter": "eslint",
-      "unitTestRunner": "jest",
-      "standalone": true
-    },
-    "@nx/angular:library": {
       "style": "scss",
-      "linter": "eslint",
-      "unitTestRunner": "jest",
-      "standalone": true
-    },
-    "@nx/angular:component": {
-      "style": "scss",
-      "standalone": true
+      "unitTestRunner": "jest"
     }
-  },
-  "defaultProject": "shell",
-  "analytics": true
+  }
 }
