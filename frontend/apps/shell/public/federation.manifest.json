@@ -1,1 +1,7 @@
-{}
+{
+  "mfe-home": "http://localhost:4201/remoteEntry.json",
+  "mfe-live": "http://localhost:4202/remoteEntry.json",
+  "mfe-competition": "http://localhost:4203/remoteEntry.json",
+  "mfe-team": "http://localhost:4204/remoteEntry.json",
+  "mfe-profile": "http://localhost:4205/remoteEntry.json"
+}

@@ -1,0 +1,54 @@
+{
+  "name": "design-system",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "frontend/libs/design-system/src",
+  "prefix": "ds",
+  "projectType": "library",
+  "tags": ["type:ui", "scope:design-system"],
+  "targets": {
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "frontend/libs/design-system/jest.config.ts",
+        "tsConfig": "frontend/libs/design-system/tsconfig.spec.json"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "storybook": {
+      "executor": "@storybook/angular:start-storybook",
+      "options": {
+        "port": 4400,
+        "configDir": "frontend/libs/design-system/.storybook",
+        "browserTarget": "design-system:build-storybook",
+        "tsConfig": "frontend/libs/design-system/.storybook/tsconfig.json",
+        "styles": ["frontend/libs/design-system/src/styles/index.scss"],
+        "compodoc": false
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "build-storybook": {
+      "executor": "@storybook/angular:build-storybook",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "dist/storybook/design-system",
+        "configDir": "frontend/libs/design-system/.storybook",
+        "browserTarget": "design-system:build-storybook",
+        "tsConfig": "frontend/libs/design-system/.storybook/tsconfig.json",
+        "styles": ["frontend/libs/design-system/src/styles/index.scss"],
+        "compodoc": false
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    }
+  }
+}

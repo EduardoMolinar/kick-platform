@@ -1,0 +1,15 @@
+<nav class="ds-top-nav" aria-label="Primary">
+  <ul class="ds-top-nav__list">
+    @for (item of items; track item.path) {
+      <li class="ds-top-nav__item">
+        <a
+          class="ds-top-nav__link"
+          [routerLink]="item.path"
+          routerLinkActive="ds-top-nav__link--active"
+        >
+          {{ item.label }}
+        </a>
+      </li>
+    }
+  </ul>
+</nav>
