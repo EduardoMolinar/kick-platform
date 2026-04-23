@@ -1,0 +1,19 @@
+<section class="live-now">
+  <header class="live-now__header">
+    <h1 class="live-now__title">Live now</h1>
+  </header>
+
+  @if (matches$ | async; as matches) {
+    @if (matches.length > 0) {
+      <ds-list>
+        @for (match of matches; track match.id) {
+          <ds-list-item>
+            <mfe-live-match-card [match]="match" />
+          </ds-list-item>
+        }
+      </ds-list>
+    } @else {
+      <p class="live-now__empty">No matches in progress.</p>
+    }
+  }
+</section>

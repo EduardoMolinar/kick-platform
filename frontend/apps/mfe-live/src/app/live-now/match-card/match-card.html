@@ -1,0 +1,17 @@
+<ds-card variant="flat" [attr.aria-label]="'Match: ' + match.home.team.name + ' vs ' + match.away.team.name">
+  <div ds-card-header class="match-card__header">
+    <span class="match-card__competition">{{ match.competition.code }}</span>
+    <ds-badge [variant]="badgeVariant">{{ statusLabel }}</ds-badge>
+  </div>
+
+  <div class="match-card__teams">
+    <div class="match-card__row">
+      <span class="match-card__team-name">{{ match.home.team.name }}</span>
+      <span class="match-card__score">{{ match.home.score }}</span>
+    </div>
+    <div class="match-card__row">
+      <span class="match-card__team-name">{{ match.away.team.name }}</span>
+      <span class="match-card__score">{{ match.away.score }}</span>
+    </div>
+  </div>
+</ds-card>

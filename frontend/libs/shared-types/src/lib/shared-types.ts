@@ -10,3 +10,5 @@ export interface Competition {
   readonly name: string;
   readonly code: 'UCL' | 'PL' | 'LIGA' | 'INT';
 }
+
+export * from './match';

@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+
+.match-card {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ds-space-3);
+  }
+
+  &__competition {
+    font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-bold);
+    letter-spacing: 0.04em;
+    color: var(--ds-color-text-muted);
+    text-transform: uppercase;
+  }
+
+  &__teams {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-space-2);
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ds-space-4);
+    font-size: var(--ds-font-size-md);
+  }
+
+  &__team-name {
+    color: var(--ds-color-text);
+  }
+
+  &__score {
+    font-weight: var(--ds-font-weight-bold);
+    color: var(--ds-color-text);
+    min-width: var(--ds-space-5);
+    text-align: right;
+  }
+}

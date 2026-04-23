@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  padding: var(--ds-space-5) var(--ds-space-4);
+}
+
+.live-now {
+  max-width: 48rem;
+  margin: 0 auto;
+
+  &__header {
+    margin-bottom: var(--ds-space-4);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--ds-font-size-xl);
+    font-weight: var(--ds-font-weight-bold);
+    color: var(--ds-color-text);
+  }
+
+  &__empty {
+    color: var(--ds-color-text-muted);
+    font-size: var(--ds-font-size-md);
+  }
+}

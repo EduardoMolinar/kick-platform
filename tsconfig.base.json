@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@platform/design-system": ["frontend/libs/design-system/src/index.ts"],
-      "@platform/shared-types": ["frontend/libs/shared-types/src/index.ts"]
+      "@platform/shared-types": ["frontend/libs/shared-types/src/index.ts"],
+      "@platform/sports-data": ["frontend/libs/sports-data/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
