@@ -4,6 +4,7 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { AUTH_SERVICE, MockAuthService } from '@platform/auth';
 import { appRoutes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
@@ -11,5 +12,6 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(appRoutes),
+    { provide: AUTH_SERVICE, useExisting: MockAuthService },
   ],
 };

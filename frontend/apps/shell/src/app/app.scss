@@ -1,0 +1,15 @@
+.shell__header {
+  display: flex;
+  align-items: center;
+
+  ds-top-nav {
+    flex: 1;
+  }
+}
+
+.shell__user {
+  padding: 0 var(--ds-space-4);
+  font-size: var(--ds-font-size-sm);
+  color: var(--ds-color-text-muted);
+  white-space: nowrap;
+}

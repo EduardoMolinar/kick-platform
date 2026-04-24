@@ -1,0 +1,44 @@
+<section class="profile-page">
+  @if (user$ | async; as user) {
+    <header class="profile-page__header">
+      <h1 class="profile-page__title">Your profile</h1>
+      <p class="profile-page__meta">
+        {{ user.displayName }} · <span class="profile-page__email">{{ user.email }}</span>
+      </p>
+    </header>
+
+    <section class="profile-page__block">
+      <h2 class="profile-page__heading">Followed teams</h2>
+      @if (favoriteTeams$ | async; as teams) {
+        @if (teams.length > 0) {
+          <ds-list>
+            @for (team of teams; track team.id) {
+              <ds-list-item>
+                <mfe-profile-team-tile [team]="team" />
+              </ds-list-item>
+            }
+          </ds-list>
+        } @else {
+          <p class="profile-page__empty">You don't follow any teams yet.</p>
+        }
+      }
+    </section>
+
+    <section class="profile-page__block">
+      <h2 class="profile-page__heading">Followed competitions</h2>
+      @if (favoriteCompetitions$ | async; as comps) {
+        @if (comps.length > 0) {
+          <ds-list>
+            @for (comp of comps; track comp.id) {
+              <ds-list-item>
+                <mfe-profile-competition-tile [competition]="comp" />
+              </ds-list-item>
+            }
+          </ds-list>
+        } @else {
+          <p class="profile-page__empty">You don't follow any competitions yet.</p>
+        }
+      }
+    </section>
+  }
+</section>

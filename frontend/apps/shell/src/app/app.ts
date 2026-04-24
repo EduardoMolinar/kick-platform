@@ -1,11 +1,16 @@
-import { Component } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AUTH_SERVICE } from '@platform/auth';
+import type { AuthSession } from '@platform/auth';
 import { DsTopNav, DsTopNavItem } from '@platform/design-system';
+import type { Observable } from 'rxjs';
 
 @Component({
-  imports: [RouterOutlet, DsTopNav],
+  imports: [RouterOutlet, DsTopNav, AsyncPipe],
   selector: 'app-root',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -17,4 +22,7 @@ export class App {
     { label: 'Teams', path: '/team' },
     { label: 'Profile', path: '/profile' },
   ];
+
+  protected readonly currentUser$: Observable<AuthSession | null> =
+    inject(AUTH_SERVICE).currentUser$;
 }

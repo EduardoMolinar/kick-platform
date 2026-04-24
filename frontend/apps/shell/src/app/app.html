@@ -1,4 +1,9 @@
-<ds-top-nav [items]="navItems"></ds-top-nav>
+<header class="shell__header">
+  <ds-top-nav [items]="navItems"></ds-top-nav>
+  @if (currentUser$ | async; as user) {
+    <span class="shell__user" aria-live="polite">Hi, {{ user.displayName }}</span>
+  }
+</header>
 <main>
   <router-outlet></router-outlet>
 </main>
