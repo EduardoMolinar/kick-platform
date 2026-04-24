@@ -1,0 +1,35 @@
+<table class="standings-table">
+  <caption class="standings-table__caption sr-only">
+    {{ standing.competition.name }} standings
+  </caption>
+  <thead>
+    <tr>
+      <th scope="col" class="standings-table__num">Pos</th>
+      <th scope="col">Team</th>
+      <th scope="col" class="standings-table__num">P</th>
+      <th scope="col" class="standings-table__num">W</th>
+      <th scope="col" class="standings-table__num">D</th>
+      <th scope="col" class="standings-table__num">L</th>
+      <th scope="col" class="standings-table__num">GF</th>
+      <th scope="col" class="standings-table__num">GA</th>
+      <th scope="col" class="standings-table__num">GD</th>
+      <th scope="col" class="standings-table__num">Pts</th>
+    </tr>
+  </thead>
+  <tbody>
+    @for (row of standing.rows; track row.team.id) {
+      <tr>
+        <td class="standings-table__num">{{ row.position }}</td>
+        <td>{{ row.team.name }}</td>
+        <td class="standings-table__num">{{ row.played }}</td>
+        <td class="standings-table__num">{{ row.won }}</td>
+        <td class="standings-table__num">{{ row.drawn }}</td>
+        <td class="standings-table__num">{{ row.lost }}</td>
+        <td class="standings-table__num">{{ row.goalsFor }}</td>
+        <td class="standings-table__num">{{ row.goalsAgainst }}</td>
+        <td class="standings-table__num">{{ row.goalDifference }}</td>
+        <td class="standings-table__num standings-table__points">{{ row.points }}</td>
+      </tr>
+    }
+  </tbody>
+</table>

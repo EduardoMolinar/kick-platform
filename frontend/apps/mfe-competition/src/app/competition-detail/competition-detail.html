@@ -1,0 +1,34 @@
+<section class="competition-detail">
+  @if (competitionId$ | async; as competitionId) {
+    <header class="competition-detail__header">
+      <a routerLink="/competition" class="competition-detail__back">← All competitions</a>
+      <h1 class="competition-detail__title">{{ competitionId | uppercase }}</h1>
+    </header>
+
+    <section class="competition-detail__block">
+      <h2 class="competition-detail__heading">Upcoming fixtures</h2>
+      @if (fixtures$ | async; as fixtures) {
+        @if (fixtures.length > 0) {
+          <ds-list>
+            @for (fixture of fixtures; track fixture.id) {
+              <ds-list-item>
+                <mfe-competition-fixture-row [fixture]="fixture" />
+              </ds-list-item>
+            }
+          </ds-list>
+        } @else {
+          <p class="competition-detail__empty">No upcoming fixtures.</p>
+        }
+      }
+    </section>
+
+    <section class="competition-detail__block">
+      <h2 class="competition-detail__heading">Standings</h2>
+      @if (standings$ | async; as standings) {
+        <mfe-competition-standings-table [standing]="standings" />
+      } @else {
+        <p class="competition-detail__empty">Standings not available for this competition.</p>
+      }
+    </section>
+  }
+</section>

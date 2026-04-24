@@ -1,0 +1,21 @@
+<section class="competition-list">
+  <header class="competition-list__header">
+    <h1 class="competition-list__title">Competitions</h1>
+  </header>
+
+  <ds-list>
+    @for (competition of competitions; track competition.id) {
+      <ds-list-item>
+        <a
+          class="competition-list__link"
+          [routerLink]="['/competition', competition.id]"
+        >
+          <ds-card variant="flat">
+            <span class="competition-list__code">{{ competition.code }}</span>
+            <span class="competition-list__name">{{ competition.name }}</span>
+          </ds-card>
+        </a>
+      </ds-list-item>
+    }
+  </ds-list>
+</section>

@@ -1,0 +1,41 @@
+:host {
+  display: block;
+  padding: var(--ds-space-5) var(--ds-space-4);
+}
+
+.competition-list {
+  max-width: 48rem;
+  margin: 0 auto;
+
+  &__header {
+    margin-bottom: var(--ds-space-4);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--ds-font-size-xl);
+    font-weight: var(--ds-font-weight-bold);
+    color: var(--ds-color-text);
+  }
+
+  &__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  &__code {
+    display: inline-block;
+    font-size: var(--ds-font-size-xs);
+    font-weight: var(--ds-font-weight-bold);
+    letter-spacing: 0.04em;
+    color: var(--ds-color-text-muted);
+    text-transform: uppercase;
+    margin-right: var(--ds-space-3);
+  }
+
+  &__name {
+    font-size: var(--ds-font-size-md);
+    color: var(--ds-color-text);
+  }
+}

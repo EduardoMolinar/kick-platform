@@ -12,3 +12,5 @@ export interface Competition {
 }
 
 export * from './match';
+export * from './fixture';
+export * from './standings';

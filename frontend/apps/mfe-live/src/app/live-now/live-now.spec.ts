@@ -23,6 +23,8 @@ describe('LiveNow', () => {
     const stub: SportsDataService = {
       getLiveMatches: () => of(fakeMatches),
       getMatch: () => of(undefined),
+      getFixtures: () => of([]),
+      getStandings: () => of(undefined),
     };
     await TestBed.configureTestingModule({
       imports: [LiveNow],
@@ -41,6 +43,8 @@ describe('LiveNow', () => {
     const empty: SportsDataService = {
       getLiveMatches: () => of([]),
       getMatch: () => of(undefined),
+      getFixtures: () => of([]),
+      getStandings: () => of(undefined),
     };
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
