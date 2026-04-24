@@ -15,7 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@platform/auth": ["frontend/libs/auth/src/index.ts"],
       "@platform/design-system": ["frontend/libs/design-system/src/index.ts"],
+      "@platform/profile": ["frontend/libs/profile/src/index.ts"],
       "@platform/shared-types": ["frontend/libs/shared-types/src/index.ts"],
       "@platform/sports-data": ["frontend/libs/sports-data/src/index.ts"]
     }
