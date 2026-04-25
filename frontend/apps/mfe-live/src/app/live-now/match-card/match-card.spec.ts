@@ -48,4 +48,28 @@ describe('MatchCard', () => {
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
     expect(text).toContain('FT');
   });
+
+  it('shows Follow buttons for both teams by default', () => {
+    const buttons: NodeListOf<HTMLButtonElement> =
+      fixture.nativeElement.querySelectorAll('button.match-card__follow');
+    expect(buttons.length).toBe(2);
+    expect(buttons[0].textContent?.trim()).toBe('Follow');
+    expect(buttons[1].textContent?.trim()).toBe('Follow');
+  });
+
+  it('shows Following when homeFollowing is true', () => {
+    fixture.componentRef.setInput('homeFollowing', true);
+    fixture.detectChanges();
+    const buttons: NodeListOf<HTMLButtonElement> =
+      fixture.nativeElement.querySelectorAll('button.match-card__follow');
+    expect(buttons[0].textContent?.trim()).toBe('Following');
+  });
+
+  it('emits homeFollowToggle when home follow button is clicked', () => {
+    const emitSpy = jest.spyOn(fixture.componentInstance.homeFollowToggle, 'emit');
+    const buttons: NodeListOf<HTMLButtonElement> =
+      fixture.nativeElement.querySelectorAll('button.match-card__follow');
+    buttons[0].click();
+    expect(emitSpy).toHaveBeenCalled();
+  });
 });

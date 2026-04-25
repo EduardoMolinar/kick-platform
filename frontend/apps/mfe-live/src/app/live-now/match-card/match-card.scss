@@ -42,4 +42,20 @@
     min-width: var(--ds-space-5);
     text-align: right;
   }
+
+  &__follow {
+    margin-left: auto;
+    padding: var(--ds-space-1) var(--ds-space-2);
+    border: 1px solid var(--ds-color-border);
+    border-radius: var(--ds-radius-sm);
+    background: transparent;
+    color: var(--ds-color-text-muted);
+    font-size: var(--ds-font-size-xs);
+    cursor: pointer;
+
+    &--active {
+      border-color: var(--ds-color-primary);
+      color: var(--ds-color-primary);
+    }
+  }
 }

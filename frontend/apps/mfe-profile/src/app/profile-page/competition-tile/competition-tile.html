@@ -1,4 +1,15 @@
 <ds-card variant="flat">
-  <span class="competition-tile__code">{{ competition.code }}</span>
-  <span class="competition-tile__name">{{ competition.name }}</span>
+  <div class="competition-tile__content">
+    <div class="competition-tile__info">
+      <span class="competition-tile__code">{{ competition.code }}</span>
+      <span class="competition-tile__name">{{ competition.name }}</span>
+    </div>
+    <button
+      type="button"
+      class="competition-tile__unfollow"
+      (click)="unfollow.emit()"
+    >
+      Remove
+    </button>
+  </div>
 </ds-card>

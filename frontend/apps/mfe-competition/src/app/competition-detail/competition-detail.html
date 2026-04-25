@@ -2,7 +2,20 @@
   @if (competitionId$ | async; as competitionId) {
     <header class="competition-detail__header">
       <a routerLink="/competition" class="competition-detail__back">← All competitions</a>
-      <h1 class="competition-detail__title">{{ competitionId | uppercase }}</h1>
+      <div class="competition-detail__title-row">
+        <h1 class="competition-detail__title">{{ competitionId | uppercase }}</h1>
+        @if (followVm$ | async; as fvm) {
+          <button
+            type="button"
+            class="competition-detail__follow"
+            [class.competition-detail__follow--active]="fvm.following"
+            [attr.aria-pressed]="fvm.following"
+            (click)="onFollowToggle(fvm)"
+          >
+            {{ fvm.following ? 'Following' : 'Follow' }}
+          </button>
+        }
+      </div>
     </header>
 
     <section class="competition-detail__block">

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { DsCard } from '@platform/design-system';
 import type { Competition } from '@platform/shared-types';
 
@@ -12,4 +12,5 @@ import type { Competition } from '@platform/shared-types';
 })
 export class CompetitionTile {
   @Input({ required: true }) competition!: Competition;
+  @Output() readonly unfollow = new EventEmitter<void>();
 }

@@ -8,10 +8,24 @@
     <div class="match-card__row">
       <span class="match-card__team-name">{{ match.home.team.name }}</span>
       <span class="match-card__score">{{ match.home.score }}</span>
+      <button
+        type="button"
+        class="match-card__follow"
+        [class.match-card__follow--active]="homeFollowing"
+        [attr.aria-pressed]="homeFollowing"
+        (click)="homeFollowToggle.emit()"
+      >{{ homeFollowing ? 'Following' : 'Follow' }}</button>
     </div>
     <div class="match-card__row">
       <span class="match-card__team-name">{{ match.away.team.name }}</span>
       <span class="match-card__score">{{ match.away.score }}</span>
+      <button
+        type="button"
+        class="match-card__follow"
+        [class.match-card__follow--active]="awayFollowing"
+        [attr.aria-pressed]="awayFollowing"
+        (click)="awayFollowToggle.emit()"
+      >{{ awayFollowing ? 'Following' : 'Follow' }}</button>
     </div>
   </div>
 </ds-card>

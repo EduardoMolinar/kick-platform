@@ -2,9 +2,9 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { AUTH_SERVICE, type AuthSession } from '@platform/auth';
 import { DsList, DsListItem } from '@platform/design-system';
-import { PROFILE_SERVICE } from '@platform/profile';
+import { PROFILE_SERVICE, type ProfileService } from '@platform/profile';
 import type { Competition, Team } from '@platform/shared-types';
-import { filter, shareReplay, switchMap, type Observable } from 'rxjs';
+import { filter, firstValueFrom, shareReplay, switchMap, type Observable } from 'rxjs';
 import { CompetitionTile } from './competition-tile/competition-tile';
 import { TeamTile } from './team-tile/team-tile';
 
@@ -18,7 +18,7 @@ import { TeamTile } from './team-tile/team-tile';
 })
 export class ProfilePage {
   private readonly auth = inject(AUTH_SERVICE);
-  private readonly profile = inject(PROFILE_SERVICE);
+  private readonly profile: ProfileService = inject(PROFILE_SERVICE);
 
   protected readonly user$: Observable<AuthSession> = this.auth.currentUser$.pipe(
     filter((u): u is AuthSession => u !== null),
@@ -32,4 +32,12 @@ export class ProfilePage {
   protected readonly favoriteCompetitions$: Observable<readonly Competition[]> = this.user$.pipe(
     switchMap((u) => this.profile.getFavoriteCompetitions(u.userId))
   );
+
+  protected onUnfollowTeam(userId: string, teamId: string): void {
+    firstValueFrom(this.profile.unfollowTeam(userId, teamId));
+  }
+
+  protected onUnfollowCompetition(userId: string, competitionId: string): void {
+    firstValueFrom(this.profile.unfollowCompetition(userId, competitionId));
+  }
 }

@@ -18,10 +18,33 @@
     color: var(--ds-color-text);
   }
 
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: var(--ds-space-3);
+  }
+
   &__link {
     display: block;
+    flex: 1;
     text-decoration: none;
     color: inherit;
+  }
+
+  &__follow {
+    flex-shrink: 0;
+    padding: var(--ds-space-1) var(--ds-space-3);
+    border: 1px solid var(--ds-color-border);
+    border-radius: var(--ds-radius-sm);
+    background: transparent;
+    color: var(--ds-color-text-muted);
+    font-size: var(--ds-font-size-sm);
+    cursor: pointer;
+
+    &--active {
+      border-color: var(--ds-color-primary);
+      color: var(--ds-color-primary);
+    }
   }
 
   &__code {

@@ -3,6 +3,33 @@
 }
 
 .team-tile {
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ds-space-3);
+  }
+
+  &__info {
+    flex: 1;
+  }
+
+  &__unfollow {
+    flex-shrink: 0;
+    padding: var(--ds-space-1) var(--ds-space-2);
+    border: 1px solid var(--ds-color-border);
+    border-radius: var(--ds-radius-sm);
+    background: transparent;
+    color: var(--ds-color-text-muted);
+    font-size: var(--ds-font-size-xs);
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--ds-color-danger);
+      color: var(--ds-color-danger);
+    }
+  }
+
   &__code {
     display: block;
     font-size: var(--ds-font-size-xs);

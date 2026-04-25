@@ -1,9 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { AUTH_SERVICE, type AuthService } from '@platform/auth';
+import { PROFILE_SERVICE, type ProfileService } from '@platform/profile';
 import type { Fixture, Standing } from '@platform/shared-types';
 import { SPORTS_DATA_SERVICE, SportsDataService } from '@platform/sports-data';
 import { of } from 'rxjs';
 import { CompetitionDetail } from './competition-detail';
+
+const stubUser = { userId: 'u-test', displayName: 'Test', email: 'test@test.com' };
 
 const plFixtures: readonly Fixture[] = [
   {
@@ -29,7 +33,28 @@ const plStanding: Standing = {
   ],
 };
 
-function makeStub(overrides: Partial<SportsDataService> = {}): SportsDataService {
+function makeAuthStub(): AuthService {
+  return {
+    currentUser$: of(stubUser),
+    isAuthenticated$: of(true),
+  };
+}
+
+function makeProfileStub(overrides: Partial<ProfileService> = {}): ProfileService {
+  return {
+    getFavoriteTeams: () => of([]),
+    getFavoriteCompetitions: () => of([]),
+    isFollowingTeam$: () => of(false),
+    isFollowingCompetition$: () => of(false),
+    followTeam: () => of(void 0),
+    unfollowTeam: () => of(void 0),
+    followCompetition: () => of(void 0),
+    unfollowCompetition: () => of(void 0),
+    ...overrides,
+  };
+}
+
+function makeSportsStub(overrides: Partial<SportsDataService> = {}): SportsDataService {
   return {
     getLiveMatches: () => of([]),
     getMatch: () => of(undefined),
@@ -49,7 +74,9 @@ describe('CompetitionDetail', () => {
       imports: [CompetitionDetail],
       providers: [
         provideRouter([]),
-        { provide: SPORTS_DATA_SERVICE, useValue: makeStub() },
+        { provide: AUTH_SERVICE, useValue: makeAuthStub() },
+        { provide: PROFILE_SERVICE, useValue: makeProfileStub() },
+        { provide: SPORTS_DATA_SERVICE, useValue: makeSportsStub() },
         {
           provide: ActivatedRoute,
           useValue: { paramMap: of(convertToParamMap({ competitionId: 'pl' })) },
@@ -71,9 +98,11 @@ describe('CompetitionDetail', () => {
       imports: [CompetitionDetail],
       providers: [
         provideRouter([]),
+        { provide: AUTH_SERVICE, useValue: makeAuthStub() },
+        { provide: PROFILE_SERVICE, useValue: makeProfileStub() },
         {
           provide: SPORTS_DATA_SERVICE,
-          useValue: makeStub({
+          useValue: makeSportsStub({
             getFixtures: () => of([]),
             getStandings: () => of(undefined),
           }),
@@ -89,5 +118,34 @@ describe('CompetitionDetail', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent ?? '').toContain('Standings not available');
+  });
+
+  it('shows Follow button and calls followCompetition on click', async () => {
+    const profileStub = makeProfileStub();
+    const followSpy = jest.spyOn(profileStub, 'followCompetition').mockReturnValue(of(void 0));
+
+    await TestBed.configureTestingModule({
+      imports: [CompetitionDetail],
+      providers: [
+        provideRouter([]),
+        { provide: AUTH_SERVICE, useValue: makeAuthStub() },
+        { provide: PROFILE_SERVICE, useValue: profileStub },
+        { provide: SPORTS_DATA_SERVICE, useValue: makeSportsStub() },
+        {
+          provide: ActivatedRoute,
+          useValue: { paramMap: of(convertToParamMap({ competitionId: 'pl' })) },
+        },
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(CompetitionDetail);
+    fixture.detectChanges();
+
+    const btn: HTMLButtonElement = fixture.nativeElement.querySelector('button.competition-detail__follow');
+    expect(btn).toBeTruthy();
+    expect(btn.textContent?.trim()).toBe('Follow');
+
+    btn.click();
+    expect(followSpy).toHaveBeenCalledWith('u-test', expect.objectContaining({ id: 'pl' }));
   });
 });

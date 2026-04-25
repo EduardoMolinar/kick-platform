@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { DsBadge, DsCard } from '@platform/design-system';
 import type { MatchSummary } from '@platform/shared-types';
 
@@ -12,6 +12,10 @@ import type { MatchSummary } from '@platform/shared-types';
 })
 export class MatchCard {
   @Input({ required: true }) match!: MatchSummary;
+  @Input() homeFollowing = false;
+  @Input() awayFollowing = false;
+  @Output() readonly homeFollowToggle = new EventEmitter<void>();
+  @Output() readonly awayFollowToggle = new EventEmitter<void>();
 
   protected get badgeVariant(): 'live' | 'neutral' | 'warning' {
     switch (this.match.status) {

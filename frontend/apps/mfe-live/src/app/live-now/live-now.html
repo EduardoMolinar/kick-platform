@@ -3,12 +3,18 @@
     <h1 class="live-now__title">Live now</h1>
   </header>
 
-  @if (matches$ | async; as matches) {
-    @if (matches.length > 0) {
+  @if (vm$ | async; as vm) {
+    @if (vm.matches.length > 0) {
       <ds-list>
-        @for (match of matches; track match.id) {
+        @for (item of vm.matches; track item.match.id) {
           <ds-list-item>
-            <mfe-live-match-card [match]="match" />
+            <mfe-live-match-card
+              [match]="item.match"
+              [homeFollowing]="item.homeFollowing"
+              [awayFollowing]="item.awayFollowing"
+              (homeFollowToggle)="onFollowToggle(vm.user, item.match.home.team, item.homeFollowing)"
+              (awayFollowToggle)="onFollowToggle(vm.user, item.match.away.team, item.awayFollowing)"
+            />
           </ds-list-item>
         }
       </ds-list>

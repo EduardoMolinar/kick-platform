@@ -1,4 +1,15 @@
 <ds-card variant="flat">
-  <span class="team-tile__code">{{ team.shortName ?? team.name }}</span>
-  <span class="team-tile__name">{{ team.name }}</span>
+  <div class="team-tile__content">
+    <div class="team-tile__info">
+      <span class="team-tile__code">{{ team.shortName ?? team.name }}</span>
+      <span class="team-tile__name">{{ team.name }}</span>
+    </div>
+    <button
+      type="button"
+      class="team-tile__unfollow"
+      (click)="unfollow.emit()"
+    >
+      Remove
+    </button>
+  </div>
 </ds-card>

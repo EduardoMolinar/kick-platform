@@ -14,7 +14,10 @@
           <ds-list>
             @for (team of teams; track team.id) {
               <ds-list-item>
-                <mfe-profile-team-tile [team]="team" />
+                <mfe-profile-team-tile
+                  [team]="team"
+                  (unfollow)="onUnfollowTeam(user.userId, team.id)"
+                />
               </ds-list-item>
             }
           </ds-list>
@@ -31,7 +34,10 @@
           <ds-list>
             @for (comp of comps; track comp.id) {
               <ds-list-item>
-                <mfe-profile-competition-tile [competition]="comp" />
+                <mfe-profile-competition-tile
+                  [competition]="comp"
+                  (unfollow)="onUnfollowCompetition(user.userId, comp.id)"
+                />
               </ds-list-item>
             }
           </ds-list>

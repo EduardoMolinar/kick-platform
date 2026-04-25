@@ -3,19 +3,32 @@
     <h1 class="competition-list__title">Competitions</h1>
   </header>
 
-  <ds-list>
-    @for (competition of competitions; track competition.id) {
-      <ds-list-item>
-        <a
-          class="competition-list__link"
-          [routerLink]="['/competition', competition.id]"
-        >
-          <ds-card variant="flat">
-            <span class="competition-list__code">{{ competition.code }}</span>
-            <span class="competition-list__name">{{ competition.name }}</span>
-          </ds-card>
-        </a>
-      </ds-list-item>
-    }
-  </ds-list>
+  @if (vm$ | async; as vm) {
+    <ds-list>
+      @for (competition of competitions; track competition.id) {
+        <ds-list-item>
+          <div class="competition-list__item">
+            <a
+              class="competition-list__link"
+              [routerLink]="['/competition', competition.id]"
+            >
+              <ds-card variant="flat">
+                <span class="competition-list__code">{{ competition.code }}</span>
+                <span class="competition-list__name">{{ competition.name }}</span>
+              </ds-card>
+            </a>
+            <button
+              type="button"
+              class="competition-list__follow"
+              [class.competition-list__follow--active]="vm.followMap.get(competition.id)"
+              [attr.aria-pressed]="vm.followMap.get(competition.id) ?? false"
+              (click)="onFollowToggle(vm.user, competition, vm.followMap.get(competition.id) ?? false)"
+            >
+              {{ (vm.followMap.get(competition.id) ?? false) ? 'Following' : 'Follow' }}
+            </button>
+          </div>
+        </ds-list-item>
+      }
+    </ds-list>
+  }
 </section>
