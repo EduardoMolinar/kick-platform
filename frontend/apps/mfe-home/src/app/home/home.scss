@@ -1,0 +1,42 @@
+:host {
+  display: block;
+}
+
+.home {
+  padding: var(--ds-space-4);
+}
+
+.home__header {
+  margin-bottom: var(--ds-space-4);
+}
+
+.home__title {
+  font-size: var(--ds-font-size-xl);
+  color: var(--ds-color-text);
+  margin: 0;
+}
+
+.home__block {
+  margin-bottom: var(--ds-space-5);
+}
+
+.home__heading {
+  font-size: var(--ds-font-size-lg);
+  color: var(--ds-color-text);
+  margin: 0 0 var(--ds-space-3);
+}
+
+.home__live-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: var(--ds-space-3);
+}
+
+.home__empty {
+  color: var(--ds-color-text-muted);
+  margin: 0;
+}
+
+.home__cta {
+  color: var(--ds-color-primary);
+}

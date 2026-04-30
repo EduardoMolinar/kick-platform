@@ -1,0 +1,7 @@
+<div class="fixture-tile">
+  <span class="fixture-tile__date">{{ fixture.kickoffAt | date:'EEE d MMM HH:mm' }}</span>
+  <span class="fixture-tile__competition">{{ fixture.competition.code }}</span>
+  <span class="fixture-tile__teams">
+    {{ fixture.home.name }} <span class="fixture-tile__vs">vs</span> {{ fixture.away.name }}
+  </span>
+</div>

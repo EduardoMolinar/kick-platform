@@ -1,0 +1,23 @@
+<ds-card variant="raised">
+  <header class="live-tile__header">
+    <span class="live-tile__competition">{{ match.competition.code }}</span>
+    <ds-badge variant="live">
+      @switch (match.status) {
+        @case ('live') { LIVE {{ match.minute }}' }
+        @case ('halftime') { HT }
+        @case ('finished') { FT }
+        @default { {{ match.status }} }
+      }
+    </ds-badge>
+  </header>
+  <div class="live-tile__teams">
+    <div class="live-tile__row">
+      <span>{{ match.home.team.name }}</span>
+      <span>{{ match.home.score }}</span>
+    </div>
+    <div class="live-tile__row">
+      <span>{{ match.away.team.name }}</span>
+      <span>{{ match.away.score }}</span>
+    </div>
+  </div>
+</ds-card>

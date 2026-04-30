@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+
+.fixture-tile {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-2) 0;
+}
+
+.fixture-tile__date {
+  font-size: var(--ds-font-size-sm);
+  color: var(--ds-color-text-muted);
+  white-space: nowrap;
+}
+
+.fixture-tile__competition {
+  font-size: var(--ds-font-size-sm);
+  color: var(--ds-color-text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.fixture-tile__teams {
+  font-size: var(--ds-font-size-base);
+  color: var(--ds-color-text);
+}
+
+.fixture-tile__vs {
+  color: var(--ds-color-text-muted);
+  margin: 0 var(--ds-space-1);
+}
