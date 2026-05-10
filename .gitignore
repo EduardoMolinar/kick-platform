@@ -31,3 +31,7 @@ Thumbs.db
 .env.*.local
 
 .angular
+
+# Claude Code — local/runtime only
+.claude/settings.local.json
+.claude/scheduled_tasks.lock

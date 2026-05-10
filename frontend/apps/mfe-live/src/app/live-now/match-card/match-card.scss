@@ -3,43 +3,177 @@
 }
 
 .match-card {
-  &__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--ds-space-3);
-  }
+  position: relative;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--ds-radius-md);
+  padding: var(--ds-space-4) var(--ds-space-5);
+  overflow: hidden;
+  transition:
+    border-color var(--ds-duration-fast) var(--ds-easing-standard),
+    transform var(--ds-duration-fast) var(--ds-easing-standard);
+}
 
-  &__competition {
-    font-size: var(--ds-font-size-xs);
-    font-weight: var(--ds-font-weight-bold);
-    letter-spacing: 0.04em;
-    color: var(--ds-color-text-muted);
-    text-transform: uppercase;
-  }
+.match-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
 
-  &__teams {
-    display: flex;
-    flex-direction: column;
-    gap: var(--ds-space-2);
-  }
+/* Competition-keyed left edge stripe */
+.match-card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--ink-dim);
+}
 
-  &__row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--ds-space-4);
-    font-size: var(--ds-font-size-md);
-  }
+.match-card--pl::after { background: var(--pink); }
+.match-card--liga::after { background: var(--orange); }
+.match-card--ucl::after { background: var(--violet); }
+.match-card--int::after { background: var(--cyan); }
 
-  &__team-name {
-    color: var(--ds-color-text);
-  }
+/* === FEATURED VARIANT === */
+.match-card--featured {
+  padding: var(--ds-space-5) var(--ds-space-6);
+  background:
+    radial-gradient(ellipse at top right, rgba(255, 31, 138, 0.18), transparent 60%),
+    radial-gradient(ellipse at bottom left, rgba(0, 209, 255, 0.14), transparent 55%),
+    var(--surface-1);
+}
 
-  &__score {
-    font-weight: var(--ds-font-weight-bold);
-    color: var(--ds-color-text);
-    min-width: var(--ds-space-5);
-    text-align: right;
-  }
+.match-card--featured::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--lime), var(--cyan), var(--pink));
+  z-index: 1;
+}
+
+/* === HEADER === */
+.match-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--ds-space-3);
+  font-family: var(--font-display);
+  letter-spacing: 0.08em;
+}
+
+.match-card__competition {
+  font-size: var(--ds-font-size-sm);
+  color: var(--ink-muted);
+}
+
+.match-card--pl .match-card__competition { color: var(--pink); }
+.match-card--liga .match-card__competition { color: var(--orange); }
+.match-card--ucl .match-card__competition { color: var(--violet); }
+.match-card--int .match-card__competition { color: var(--cyan); }
+
+.match-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  font-family: var(--font-mono);
+  font-size: var(--ds-font-size-xs);
+  font-weight: 700;
+  color: var(--lime);
+  letter-spacing: 0.06em;
+}
+
+/* Halftime / finished / scheduled / postponed share muted treatment */
+.match-card__status:not(:has(.match-card__pulse)) {
+  color: var(--ink-muted);
+  font-family: var(--font-display);
+  font-size: var(--ds-font-size-sm);
+  letter-spacing: 0.08em;
+}
+
+.match-card__pulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--lime);
+  box-shadow: 0 0 0 0 var(--lime-glow);
+  animation: match-card-pulse 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes match-card-pulse {
+  0% { box-shadow: 0 0 0 0 var(--lime-glow); }
+  70% { box-shadow: 0 0 0 8px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+/* === TEAM ROWS === */
+.match-card__teams {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-3);
+}
+
+.match-card__row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: var(--ds-space-3);
+}
+
+.match-card__team-name {
+  font-family: var(--font-display);
+  font-size: var(--ds-font-size-xl);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.match-card__score {
+  font-family: var(--font-display);
+  font-size: var(--ds-font-size-2xl);
+  letter-spacing: -0.02em;
+  line-height: 0.9;
+  min-width: 2ch;
+  text-align: right;
+  color: var(--ink);
+}
+
+.match-card__score--leading {
+  color: var(--lime);
+}
+
+.match-card__follow {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--ds-radius-pill);
+  padding: 4px 12px;
+  font-family: var(--font-display);
+  font-size: var(--ds-font-size-xs);
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition:
+    border-color var(--ds-duration-fast) var(--ds-easing-standard),
+    color var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+.match-card__follow:hover {
+  border-color: var(--brand-strong);
+  color: var(--ink);
+}
+
+.match-card__follow--active {
+  border-color: var(--brand-strong);
+  color: var(--brand-strong);
+  background: rgba(200, 255, 0, 0.08);
+}
+
+.match-card__follow:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 2px;
 }

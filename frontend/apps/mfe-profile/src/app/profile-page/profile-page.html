@@ -1,0 +1,69 @@
+<section class="profile-page">
+  @if (user$ | async; as user) {
+    <header class="profile-page__header">
+      <div class="profile-page__hero">
+        <div class="profile-page__avatar" aria-hidden="true">
+          {{ initials(user.displayName) }}
+        </div>
+        <div class="profile-page__identity">
+          <span class="profile-page__label">Your profile</span>
+          <h1 class="profile-page__title">{{ user.displayName }}</h1>
+          <span class="profile-page__email">{{ user.email }}</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="profile-page__grid">
+      <section class="profile-page__block">
+        <h2 class="profile-page__heading">Followed teams</h2>
+        @if (favoriteTeams$ | async; as teams) {
+          @if (teams.length > 0) {
+            <ul class="profile-page__tiles">
+              @for (team of teams; track team.id) {
+                <li>
+                  <mfe-profile-team-tile
+                    [team]="team"
+                    (unfollow)="onUnfollowTeam(user.userId, team.id)"
+                  />
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="profile-page__empty">You don't follow any teams yet.</p>
+          }
+        }
+      </section>
+
+      <section class="profile-page__block">
+        <h2 class="profile-page__heading">Followed competitions</h2>
+        @if (favoriteCompetitions$ | async; as comps) {
+          @if (comps.length > 0) {
+            <ul class="profile-page__tiles">
+              @for (comp of comps; track comp.id) {
+                <li>
+                  <mfe-profile-competition-tile
+                    [competition]="comp"
+                    (unfollow)="onUnfollowCompetition(user.userId, comp.id)"
+                  />
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="profile-page__empty">You don't follow any competitions yet.</p>
+          }
+        }
+      </section>
+    </div>
+
+    <section class="profile-page__block profile-page__theme">
+      <h2 class="profile-page__heading">Theme</h2>
+      <p class="profile-page__theme-help">
+        Pitch defaults to dark mode. Switch to light, or follow your operating system's preference.
+      </p>
+      <ds-theme-toggle
+        [mode]="(themeMode$ | async) ?? 'dark'"
+        (modeChange)="onThemeChange($event)"
+      ></ds-theme-toggle>
+    </section>
+  }
+</section>

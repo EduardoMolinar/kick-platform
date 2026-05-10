@@ -1,0 +1,16 @@
+<article class="team-tile">
+  <span class="team-tile__bg-mark" aria-hidden="true">{{ team.shortName ?? team.name.substring(0, 3) }}</span>
+  <div class="team-tile__content">
+    <div class="team-tile__info">
+      <span class="team-tile__code">{{ team.shortName ?? '—' }}</span>
+      <a [routerLink]="['/team', team.id]" class="team-tile__link">{{ team.name }}</a>
+    </div>
+    <button
+      type="button"
+      class="team-tile__unfollow"
+      (click)="unfollow.emit()"
+    >
+      Remove
+    </button>
+  </div>
+</article>

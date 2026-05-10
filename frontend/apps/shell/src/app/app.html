@@ -1,4 +1,15 @@
-<ds-top-nav [items]="navItems"></ds-top-nav>
+<header class="shell__header">
+  <ds-top-nav [items]="navItems"></ds-top-nav>
+  <div class="shell__actions">
+    <ds-theme-toggle
+      [mode]="(themeMode$ | async) ?? 'dark'"
+      (modeChange)="onThemeChange($event)"
+    ></ds-theme-toggle>
+    @if (currentUser$ | async; as user) {
+      <span class="shell__user" aria-live="polite">Hi, {{ user.displayName }}</span>
+    }
+  </div>
+</header>
 <main>
   <router-outlet></router-outlet>
 </main>

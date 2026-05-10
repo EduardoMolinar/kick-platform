@@ -1,17 +1,30 @@
 <section class="live-now">
   <header class="live-now__header">
-    <h1 class="live-now__title">Live now</h1>
+    <h1 class="live-now__title">Live <em>/ now</em></h1>
+    @if (vm$ | async; as vm) {
+      @if (vm.matches.length > 0) {
+        <span class="live-now__count">
+          <span class="live-now__pulse"></span>
+          {{ vm.matches.length }} LIVE
+        </span>
+      }
+    }
   </header>
 
-  @if (matches$ | async; as matches) {
-    @if (matches.length > 0) {
-      <ds-list>
-        @for (match of matches; track match.id) {
-          <ds-list-item>
-            <mfe-live-match-card [match]="match" />
-          </ds-list-item>
+  @if (vm$ | async; as vm) {
+    @if (vm.matches.length > 0) {
+      <div class="live-now__grid">
+        @for (item of vm.matches; track item.match.id; let first = $first) {
+          <mfe-live-match-card
+            [match]="item.match"
+            [homeFollowing]="item.homeFollowing"
+            [awayFollowing]="item.awayFollowing"
+            [featured]="first"
+            (homeFollowToggle)="onFollowToggle(vm.user, item.match.home.team, item.homeFollowing)"
+            (awayFollowToggle)="onFollowToggle(vm.user, item.match.away.team, item.awayFollowing)"
+          />
         }
-      </ds-list>
+      </div>
     } @else {
       <p class="live-now__empty">No matches in progress.</p>
     }

@@ -1,10 +1,14 @@
 <div class="fixture-row">
   <time class="fixture-row__kickoff" [attr.datetime]="fixture.kickoffAt">
-    {{ fixture.kickoffAt | date: 'EEE d MMM HH:mm' }}
+    <span class="fixture-row__day">{{ fixture.kickoffAt | date: 'EEE' }}</span>
+    <strong>{{ fixture.kickoffAt | date: 'd' }}</strong>
+    <span class="fixture-row__time">{{ fixture.kickoffAt | date: 'HH:mm' }}</span>
   </time>
-  <span class="fixture-row__home">{{ fixture.home.name }}</span>
-  <span class="fixture-row__vs">vs</span>
-  <span class="fixture-row__away">{{ fixture.away.name }}</span>
+  <div class="fixture-row__match">
+    <span class="fixture-row__home">{{ fixture.home.name }}</span>
+    <span class="fixture-row__vs">vs</span>
+    <span class="fixture-row__away">{{ fixture.away.name }}</span>
+  </div>
   @if (fixture.matchday !== undefined) {
     <span class="fixture-row__matchday">MD {{ fixture.matchday }}</span>
   }

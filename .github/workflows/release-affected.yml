@@ -1,0 +1,163 @@
+# release-affected.yml
+#
+# PRIMARY DEPLOY PATH — runs on every push to main.
+#
+# Uses nx-set-shas to determine NX_BASE and NX_HEAD, then runs
+# `nx show projects --affected --type=app --json` to find which deployable
+# apps changed. Only changed apps are deployed; unaffected apps are skipped.
+#
+# Deployment order:
+#   1. Remotes in parallel (fail-fast: false — one failure does not block siblings)
+#   2. Shell, only after all remotes have succeeded or been skipped
+#
+# Concurrency: same group as release-all.yml. cancel-in-progress: false means
+# a second push while a deploy is running will queue rather than abort the
+# in-flight deploy, protecting partial uploads from being orphaned.
+#
+# Rollback:
+#   - Revert the offending commit(s) on main; the next push redeploys only the
+#     affected projects with the reverted code.
+#   - Or run release-all.yml manually from a known-good SHA — redeploys
+#     everything without needing a revert PR.
+#
+# Edge case — first run:
+#   nx-set-shas needs a prior successful workflow run on the base branch to
+#   determine NX_BASE. On the very first run after this workflow is added,
+#   there is no prior run, so NX_BASE falls back to the last commit on the
+#   base branch. In practice that means ALL apps are treated as affected on
+#   the first run, which is the safe failure mode (over-deploy, not skip).
+#   This self-corrects from the second run onward.
+
+name: Release — Affected
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: release-affected
+  cancel-in-progress: false
+
+permissions:
+  id-token: write   # OIDC for AWS
+  contents: read    # checkout
+  actions: read     # required by nrwl/nx-set-shas
+
+env:
+  NODE_VERSION: "24"
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job 1: determine which deployable apps are affected
+  # ─────────────────────────────────────────────────────────────────────────────
+  detect-affected:
+    name: Detect affected apps
+    runs-on: ubuntu-latest
+
+    outputs:
+      remotes: ${{ steps.parse.outputs.remotes }}
+      shell:   ${{ steps.parse.outputs.shell }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Derive NX_BASE and NX_HEAD
+        uses: nrwl/nx-set-shas@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Parse affected apps
+        id: parse
+        # nx show projects --affected --type=app --json emits a JSON array of
+        # project names. We filter to the known deployable set and split the
+        # result into two outputs:
+        #   remotes — JSON array of affected mfe-* names (may be [])
+        #   shell   — "true" | "false"
+        run: |
+          AFFECTED_JSON=$(npx nx show projects --affected --type=app --json 2>/dev/null || echo '[]')
+          echo "Raw affected apps: $AFFECTED_JSON"
+
+          DEPLOYABLE='["shell","mfe-home","mfe-live","mfe-competition","mfe-team","mfe-profile"]'
+
+          REMOTES=$(echo "$AFFECTED_JSON" | node -e "
+            const deployable = JSON.parse('$DEPLOYABLE');
+            let chunks = [];
+            process.stdin.resume();
+            process.stdin.on('data', d => chunks.push(d));
+            process.stdin.on('end', () => {
+              const affected = JSON.parse(chunks.join(''));
+              const remotes = affected.filter(p => deployable.includes(p) && p !== 'shell');
+              process.stdout.write(JSON.stringify(remotes));
+            });
+          ")
+
+          SHELL_AFFECTED=$(echo "$AFFECTED_JSON" | node -e "
+            let chunks = [];
+            process.stdin.resume();
+            process.stdin.on('data', d => chunks.push(d));
+            process.stdin.on('end', () => {
+              const affected = JSON.parse(chunks.join(''));
+              process.stdout.write(affected.includes('shell') ? 'true' : 'false');
+            });
+          ")
+
+          echo "remotes=$REMOTES" >> "$GITHUB_OUTPUT"
+          echo "shell=$SHELL_AFFECTED" >> "$GITHUB_OUTPUT"
+          echo "Affected remotes: $REMOTES"
+          echo "Shell affected: $SHELL_AFFECTED"
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job 2: deploy affected remotes in parallel
+  # ─────────────────────────────────────────────────────────────────────────────
+  deploy-remotes:
+    name: Deploy remote — ${{ matrix.remote }}
+    needs: detect-affected
+    if: needs.detect-affected.outputs.remotes != '[]' && needs.detect-affected.outputs.remotes != ''
+
+    strategy:
+      matrix:
+        remote: ${{ fromJson(needs.detect-affected.outputs.remotes) }}
+      fail-fast: false   # one remote failure does not block siblings
+
+    uses: ./.github/workflows/_deploy-remote.yml
+    with:
+      remote: ${{ matrix.remote }}
+    secrets: inherit
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job 3: deploy shell — only after remotes complete (or are skipped)
+  # ─────────────────────────────────────────────────────────────────────────────
+  deploy-shell:
+    name: Deploy shell
+    needs: [detect-affected, deploy-remotes]
+    # Deploy shell only when:
+    #   - shell is in the affected set, AND
+    #   - the workflow has not been cancelled, AND
+    #   - deploy-remotes either succeeded or was skipped (no affected remotes).
+    #
+    # Why the explicit result check instead of !failure():
+    #   When deploy-remotes is skipped (no affected remotes), GitHub marks its
+    #   result as "skipped". !failure() passes for both "success" and "skipped",
+    #   so !failure() alone would work here — BUT it also passes when the job
+    #   is "cancelled", which we want to block on. The explicit result check
+    #   makes the intent unambiguous and safe even if GitHub changes how skipped
+    #   jobs propagate.
+    if: |
+      needs.detect-affected.outputs.shell == 'true' &&
+      !cancelled() &&
+      (needs.deploy-remotes.result == 'success' || needs.deploy-remotes.result == 'skipped')
+
+    uses: ./.github/workflows/release-shell.yml
+    secrets: inherit

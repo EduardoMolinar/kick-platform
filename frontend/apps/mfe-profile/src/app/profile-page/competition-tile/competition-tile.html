@@ -1,0 +1,22 @@
+<article
+  class="competition-tile"
+  [class.competition-tile--pl]="competition.code === 'PL'"
+  [class.competition-tile--ucl]="competition.code === 'UCL'"
+  [class.competition-tile--liga]="competition.code === 'LIGA'"
+  [class.competition-tile--int]="competition.code === 'INT'"
+>
+  <span class="competition-tile__bg-mark" aria-hidden="true">{{ competition.code }}</span>
+  <div class="competition-tile__content">
+    <div class="competition-tile__info">
+      <span class="competition-tile__code">{{ competition.code }}</span>
+      <span class="competition-tile__name">{{ competition.name }}</span>
+    </div>
+    <button
+      type="button"
+      class="competition-tile__unfollow"
+      (click)="unfollow.emit()"
+    >
+      Remove
+    </button>
+  </div>
+</article>

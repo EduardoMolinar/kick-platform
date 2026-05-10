@@ -1,0 +1,107 @@
+:host {
+  display: block;
+}
+
+.team-tile {
+  position: relative;
+  padding: var(--ds-space-4) var(--ds-space-5);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--lime);
+  border-radius: var(--ds-radius-md);
+  overflow: hidden;
+  transition: border-color var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+.team-tile:hover {
+  border-color: var(--border-strong);
+  border-left-color: var(--lime);
+}
+
+/* Big background watermark using the team's short code */
+.team-tile__bg-mark {
+  position: absolute;
+  top: 50%;
+  right: var(--ds-space-3);
+  transform: translateY(-50%);
+  font-family: var(--font-display);
+  font-size: 5rem;
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: rgba(200, 255, 0, 0.07);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.team-tile__content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-3);
+}
+
+.team-tile__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.team-tile__code {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--ds-font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.team-tile__link {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: var(--ds-font-size-xl);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--ink);
+  text-decoration: none;
+  transition: color var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+.team-tile__link:hover {
+  color: var(--brand-strong);
+}
+
+.team-tile__link:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 4px;
+  border-radius: var(--ds-radius-sm);
+}
+
+.team-tile__unfollow {
+  flex-shrink: 0;
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--ds-radius-pill);
+  padding: 4px 12px;
+  font-family: var(--font-display);
+  font-size: var(--ds-font-size-xs);
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition:
+    border-color var(--ds-duration-fast) var(--ds-easing-standard),
+    color var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+.team-tile__unfollow:hover {
+  border-color: var(--ds-color-danger);
+  color: var(--ds-color-danger);
+}
+
+.team-tile__unfollow:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 2px;
+}

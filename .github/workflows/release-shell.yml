@@ -1,0 +1,170 @@
+# release-shell.yml
+#
+# Deploys the shell. Triggered manually (workflow_dispatch) or called from
+# an orchestrator workflow (workflow_call: release-affected.yml or release-all.yml).
+#
+# The tag trigger (shell/v*.*.*) has been removed. Rollback is now commit-based:
+# revert the offending commit on main and let release-affected.yml redeploy,
+# or run release-all.yml manually from a known-good SHA.
+#
+# Artifact path:  dist/frontend/apps/shell/browser/
+# S3 destination: s3://<bucket>/  (root — shell is served from /)
+#
+# Cache-sensitive files uploaded with no-cache:
+#   index.html
+#   federation.manifest.json  (sourced from federation.manifest.prod.json in
+#                              public/ — uses relative CloudFront paths so no
+#                              environment-specific URLs are hardcoded)
+#
+# Dev manifest story:
+#   public/federation.manifest.json      — localhost URLs; used by nx serve shell
+#   public/federation.manifest.prod.json — relative paths (/remotes/<name>/remoteEntry.json)
+#                                          uploaded to S3 AS federation.manifest.json
+#   Both files are copied into browser/ by the Angular build. Only the prod
+#   variant is pushed to S3 under the live key. The dev variant is intentionally
+#   excluded (--exclude below) to prevent it overwriting the prod manifest.
+#
+# Hashed assets uploaded with long-TTL immutable headers.
+#
+# CloudFront invalidation:
+#   /index.html                   — must always reflect new shell
+#   /federation.manifest.json     — remote URL manifest
+#   /importmap.json               — native federation importmap
+#   /remoteEntry.json             — shell's own federation metadata
+#   /*                            — flush hashed assets for returning users
+#
+# Rollback: revert the offending commit on main (triggers release-affected.yml),
+# or run release-all.yml manually from a known-good SHA.
+
+name: Release — Shell
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Git ref to deploy (branch or SHA — used for emergency standalone runs)"
+        required: false
+        default: "main"
+  workflow_call:
+    secrets:
+      AWS_ROLE_ARN:
+        required: true
+      S3_BUCKET:
+        required: true
+      CLOUDFRONT_DISTRIBUTION_ID:
+        required: true
+
+env:
+  NODE_VERSION: "24"
+
+jobs:
+  build-and-deploy:
+    name: Build and deploy shell
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write   # required for OIDC
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # workflow_dispatch supports a manual ref; workflow_call always runs
+          # at whatever SHA the orchestrator checked out (github.sha).
+          ref: ${{ github.event.inputs.ref || github.sha }}
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shell
+        run: |
+          npx nx build shell --configuration=production
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      # Upload hashed assets first with immutable cache headers.
+      # Exclude cache-sensitive entry files so they are uploaded
+      # separately with no-cache headers below.
+      # Also exclude federation.manifest.prod.json: it is an internal build
+      # artifact that must never be served directly from CloudFront. Its
+      # content is published to S3 as federation.manifest.json in the step below.
+      - name: Sync hashed assets (long-TTL, immutable)
+        run: |
+          aws s3 sync \
+            dist/frontend/apps/shell/browser/ \
+            s3://${{ secrets.S3_BUCKET }}/ \
+            --cache-control "public,max-age=31536000,immutable" \
+            --exclude "index.html" \
+            --exclude "federation.manifest.json" \
+            --exclude "federation.manifest.prod.json" \
+            --exclude "importmap.json" \
+            --exclude "remoteEntry.json" \
+            --delete
+
+      # Upload cache-sensitive files individually with no-cache headers.
+      - name: Upload index.html (no-cache)
+        run: |
+          aws s3 cp \
+            dist/frontend/apps/shell/browser/index.html \
+            s3://${{ secrets.S3_BUCKET }}/index.html \
+            --cache-control "no-cache,no-store,must-revalidate" \
+            --content-type "text/html"
+
+      - name: Upload federation.manifest.json (no-cache, prod URLs)
+        run: |
+          # Upload the PROD manifest (relative CloudFront paths) as the live
+          # federation.manifest.json key. The dev manifest (localhost URLs) is
+          # intentionally never published to S3.
+          # federation.manifest.prod.json is always present because it is
+          # committed to public/ and copied into browser/ by the Angular build.
+          aws s3 cp \
+            dist/frontend/apps/shell/browser/federation.manifest.prod.json \
+            s3://${{ secrets.S3_BUCKET }}/federation.manifest.json \
+            --cache-control "no-cache,no-store,must-revalidate" \
+            --content-type "application/json"
+
+      - name: Upload importmap.json (no-cache)
+        run: |
+          aws s3 cp \
+            dist/frontend/apps/shell/browser/importmap.json \
+            s3://${{ secrets.S3_BUCKET }}/importmap.json \
+            --cache-control "no-cache,no-store,must-revalidate" \
+            --content-type "application/json"
+
+      - name: Upload remoteEntry.json (no-cache)
+        run: |
+          aws s3 cp \
+            dist/frontend/apps/shell/browser/remoteEntry.json \
+            s3://${{ secrets.S3_BUCKET }}/remoteEntry.json \
+            --cache-control "no-cache,no-store,must-revalidate" \
+            --content-type "application/json"
+
+      # Invalidate in order: entry files first (smallest blast radius),
+      # then all hashed assets.
+      - name: Invalidate cache-sensitive shell files
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths \
+              "/index.html" \
+              "/federation.manifest.json" \
+              "/importmap.json" \
+              "/remoteEntry.json"
+
+      - name: Invalidate shell hashed assets
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
+            --paths "/*"

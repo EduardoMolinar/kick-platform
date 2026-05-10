@@ -1,24 +1,49 @@
+/* === BASE — theme-independent tokens === */
 :root {
-  --ds-color-primary: #0b5fff;
-  --ds-color-primary-hover: #0848c7;
-  --ds-color-primary-contrast: #ffffff;
+  /* Brand colors — constant across themes for brand identity */
+  --lime: #c8ff00;
+  --lime-dim: #94bf00;
+  --pink: #ff1f8a;
+  --pink-dim: #c0186b;
+  --cyan: #00d1ff;
+  --cyan-dim: #0099cc;
+  --orange: #ff6b35;
+  --violet: #b945ff;
 
-  --ds-color-surface: #ffffff;
-  --ds-color-surface-muted: #f4f6fa;
-  --ds-color-surface-raised: #ffffff;
+  /* Glow rgba pairs for animated indicators */
+  --pink-glow: rgba(255, 31, 138, 0.25);
+  --lime-glow: rgba(200, 255, 0, 0.25);
 
-  --ds-color-text: #111418;
-  --ds-color-text-muted: #5b6573;
-  --ds-color-text-inverse: #ffffff;
+  /* Type families */
+  --font-display: 'Bebas Neue', 'Impact', 'Helvetica Neue', sans-serif;
+  --font-body: 'Inter Tight', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --ds-font-family: var(--font-body);
 
-  --ds-color-border: rgba(0, 0, 0, 0.08);
-  --ds-color-border-strong: rgba(0, 0, 0, 0.16);
+  /* Type sizes */
+  --ds-font-size-xs: 0.75rem;
+  --ds-font-size-sm: 0.875rem;
+  --ds-font-size-md: 1rem;
+  --ds-font-size-lg: 1.25rem;
+  --ds-font-size-xl: 1.5rem;
+  --ds-font-size-2xl: 2rem;
+  --ds-font-size-3xl: 3rem;
+  --ds-font-size-4xl: 4rem;
+  --ds-font-size-5xl: 5.5rem;
 
-  --ds-color-live: #e0352b;
-  --ds-color-success: #1f8a43;
-  --ds-color-warning: #c27a00;
-  --ds-color-danger: #c2372f;
+  /* Type weights */
+  --ds-font-weight-regular: 400;
+  --ds-font-weight-medium: 500;
+  --ds-font-weight-semibold: 600;
+  --ds-font-weight-bold: 700;
+  --ds-font-weight-extrabold: 800;
+  --ds-font-weight-black: 900;
 
+  /* Line heights */
+  --ds-line-height-tight: 1.2;
+  --ds-line-height-normal: 1.5;
+
+  /* Spacing */
   --ds-space-1: 0.25rem;
   --ds-space-2: 0.5rem;
   --ds-space-3: 0.75rem;
@@ -26,30 +51,95 @@
   --ds-space-5: 1.5rem;
   --ds-space-6: 2rem;
   --ds-space-7: 3rem;
+  --ds-space-8: 4rem;
 
-  --ds-radius-sm: 0.25rem;
-  --ds-radius-md: 0.5rem;
-  --ds-radius-lg: 1rem;
+  /* Radii */
+  --ds-radius-sm: 0.5rem;
+  --ds-radius-md: 0.75rem;
+  --ds-radius-lg: 1.125rem;
+  --ds-radius-xl: 1.5rem;
   --ds-radius-pill: 999px;
 
-  --ds-font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --ds-font-size-xs: 0.75rem;
-  --ds-font-size-sm: 0.875rem;
-  --ds-font-size-md: 1rem;
-  --ds-font-size-lg: 1.25rem;
-  --ds-font-size-xl: 1.5rem;
-
-  --ds-font-weight-regular: 400;
-  --ds-font-weight-medium: 500;
-  --ds-font-weight-bold: 700;
-
-  --ds-line-height-tight: 1.2;
-  --ds-line-height-normal: 1.5;
-
-  --ds-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
-  --ds-shadow-2: 0 4px 8px rgba(0, 0, 0, 0.06), 0 2px 4px rgba(0, 0, 0, 0.04);
-
+  /* Motion */
   --ds-duration-fast: 120ms;
   --ds-duration-base: 200ms;
   --ds-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* === DARK THEME (default) ===
+ * Applied when [data-theme="dark"] is set OR when no data-theme is set
+ * (because :root matches the html element).
+ */
+:root,
+[data-theme='dark'] {
+  --bg: #0e0e10;
+  --surface-1: #18181c;
+  --surface-2: #222229;
+  --surface-3: #2c2c36;
+  --border: #2a2a33;
+  --border-strong: #3f3f4a;
+
+  --ink: #ffffff;
+  --ink-muted: #8e8e93;
+  --ink-dim: #5a5a60;
+
+  /* Semantic intents — resolve to brand-safe values per theme */
+  --brand-strong: var(--lime);
+  --live: var(--pink);
+
+  --ds-shadow-1: 0 2px 8px rgba(0, 0, 0, 0.32);
+  --ds-shadow-2: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --ds-shadow-3: 0 24px 56px rgba(0, 0, 0, 0.48);
+}
+
+/* === LIGHT THEME ===
+ * Overrides dark when [data-theme="light"] is set.
+ * Same source-order specificity as the dark block, so this MUST come after it.
+ */
+[data-theme='light'] {
+  --bg: #fafaf8;
+  --surface-1: #f4f4f2;
+  --surface-2: #ececea;
+  --surface-3: #e2e2dd;
+  --border: #dcdcd8;
+  --border-strong: #c5c5c0;
+
+  --ink: #0e0e10;
+  --ink-muted: #5a5a60;
+  --ink-dim: #8e8e93;
+
+  --brand-strong: var(--lime-dim);
+  --live: var(--pink);
+
+  --ds-shadow-1: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --ds-shadow-2: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --ds-shadow-3: 0 24px 56px rgba(0, 0, 0, 0.14);
+}
+
+/* === COMPATIBILITY ALIASES ===
+ * Existing primitives reference --ds-color-* tokens. These now resolve
+ * to the new theme-aware variables so primitives need zero code changes.
+ * The aliases will be removed in Phase 11 when primitives are redesigned.
+ */
+:root {
+  --ds-color-primary: var(--brand-strong);
+  --ds-color-primary-hover: var(--lime);
+  /* Lime is bright in both themes — text on lime is always near-black for legibility */
+  --ds-color-primary-contrast: #0e0e10;
+
+  --ds-color-surface: var(--bg);
+  --ds-color-surface-muted: var(--surface-2);
+  --ds-color-surface-raised: var(--surface-1);
+
+  --ds-color-text: var(--ink);
+  --ds-color-text-muted: var(--ink-muted);
+  --ds-color-text-inverse: var(--bg);
+
+  --ds-color-border: var(--border);
+  --ds-color-border-strong: var(--border-strong);
+
+  --ds-color-live: var(--live);
+  --ds-color-success: var(--lime-dim);
+  --ds-color-warning: var(--orange);
+  --ds-color-danger: var(--pink);
 }

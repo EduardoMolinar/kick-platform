@@ -1,0 +1,123 @@
+:host {
+  display: block;
+}
+
+.team-list {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: var(--ds-space-5);
+}
+
+.team-list__header {
+  margin-bottom: var(--ds-space-5);
+}
+
+.team-list__title {
+  font-family: var(--font-display);
+  font-size: var(--ds-font-size-3xl);
+  letter-spacing: 0.01em;
+  color: var(--ds-color-text);
+  margin: 0;
+}
+
+.team-list__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(20rem, 100%), 1fr));
+  gap: var(--ds-space-3);
+}
+
+.team-list__card {
+  position: relative;
+  display: block;
+  padding: var(--ds-space-5);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--ds-radius-md);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  min-height: 9rem;
+  transition:
+    border-color var(--ds-duration-fast) var(--ds-easing-standard),
+    transform var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+.team-list__card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--lime);
+}
+
+.team-list__card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+
+/* Big background watermark using the team's short code, in subtle lime. */
+.team-list__bg-mark {
+  position: absolute;
+  top: 50%;
+  right: var(--ds-space-3);
+  transform: translateY(-50%);
+  font-family: var(--font-display);
+  font-size: 7rem;
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: rgba(200, 255, 0, 0.07);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.team-list__short {
+  position: relative;
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--ds-font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+  margin-bottom: var(--ds-space-2);
+}
+
+.team-list__name {
+  position: relative;
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--ds-font-size-2xl);
+  letter-spacing: 0.02em;
+  line-height: 0.95;
+  color: var(--ink);
+}
+
+.team-list__cta-arrow {
+  position: absolute;
+  bottom: var(--ds-space-4);
+  right: var(--ds-space-4);
+  font-family: var(--font-display);
+  font-size: var(--ds-font-size-lg);
+  color: var(--ink-muted);
+  transition: color var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+.team-list__card:hover .team-list__cta-arrow {
+  color: var(--brand-strong);
+}
+
+.team-list__empty {
+  color: var(--ds-color-text-muted);
+  margin: 0;
+}
+
+.team-list__cta {
+  color: var(--brand-strong);
+  text-decoration: none;
+}
+
+.team-list__cta:hover {
+  text-decoration: underline;
+}

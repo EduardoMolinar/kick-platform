@@ -1,0 +1,40 @@
+<section class="team-detail">
+  @if (vm$ | async; as vm) {
+    <header class="team-detail__header">
+      <a routerLink="/team" class="team-detail__back">← All teams</a>
+      <div class="team-detail__hero">
+        <span class="team-detail__bg-mark">{{ vm.team?.shortName ?? vm.teamId }}</span>
+        <span class="team-detail__short">{{ vm.team?.shortName ?? '—' }}</span>
+        <h1 class="team-detail__title">{{ vm.team?.name ?? vm.teamId }}</h1>
+      </div>
+    </header>
+
+    <section class="team-detail__block">
+      <h2 class="team-detail__heading">Upcoming fixtures</h2>
+      @if (vm.fixtures.length > 0) {
+        <ul class="team-detail__fixtures">
+          @for (fixture of vm.fixtures; track fixture.id) {
+            <li>
+              <mfe-team-team-fixture-row [fixture]="fixture" [teamId]="vm.teamId" />
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="team-detail__empty">No upcoming fixtures.</p>
+      }
+    </section>
+
+    <section class="team-detail__block">
+      <h2 class="team-detail__heading">Standings</h2>
+      @if (vm.standings.length > 0) {
+        <div class="team-detail__standings-grid">
+          @for (entry of vm.standings; track entry.competition.id) {
+            <mfe-team-team-standings-card [entry]="entry" />
+          }
+        </div>
+      } @else {
+        <p class="team-detail__empty">No standings available.</p>
+      }
+    </section>
+  }
+</section>

@@ -1,4 +1,45 @@
 <section class="home">
-  <h1>Home — {{ featured.name }}</h1>
-  <ds-button variant="primary">Follow</ds-button>
+  @if (vm$ | async; as vm) {
+    <header class="home__header">
+      <h1 class="home__title">Welcome back, {{ vm.user.displayName }}</h1>
+    </header>
+
+    @if (!vm.hasAnyFavorites) {
+      <ds-card variant="flat">
+        <p class="home__empty">
+          You don't follow anything yet.
+          <a routerLink="/competition" class="home__cta">Browse competitions</a>
+          to personalize your home.
+        </p>
+      </ds-card>
+    } @else {
+      <section class="home__block">
+        <h2 class="home__heading">Live now</h2>
+        @if (vm.liveFromFavorites.length > 0) {
+          <div class="home__live-grid">
+            @for (match of vm.liveFromFavorites; track match.id; let first = $first) {
+              <mfe-home-live-tile [match]="match" [featured]="first" />
+            }
+          </div>
+        } @else {
+          <p class="home__empty">No live matches involving your favorites right now.</p>
+        }
+      </section>
+
+      <section class="home__block">
+        <h2 class="home__heading">Upcoming</h2>
+        @if (vm.upcomingFromFavorites.length > 0) {
+          <ds-list>
+            @for (fixture of vm.upcomingFromFavorites; track fixture.id) {
+              <ds-list-item>
+                <mfe-home-fixture-tile [fixture]="fixture" />
+              </ds-list-item>
+            }
+          </ds-list>
+        } @else {
+          <p class="home__empty">No upcoming fixtures in your followed competitions.</p>
+        }
+      </section>
+    }
+  }
 </section>

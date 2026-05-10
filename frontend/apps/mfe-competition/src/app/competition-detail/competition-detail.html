@@ -1,21 +1,41 @@
 <section class="competition-detail">
-  @if (competitionId$ | async; as competitionId) {
-    <header class="competition-detail__header">
+  @if (followVm$ | async; as fvm) {
+    <header
+      class="competition-detail__header"
+      [class.competition-detail__header--pl]="fvm.competition?.code === 'PL'"
+      [class.competition-detail__header--ucl]="fvm.competition?.code === 'UCL'"
+      [class.competition-detail__header--liga]="fvm.competition?.code === 'LIGA'"
+      [class.competition-detail__header--int]="fvm.competition?.code === 'INT'"
+    >
       <a routerLink="/competition" class="competition-detail__back">← All competitions</a>
-      <h1 class="competition-detail__title">{{ competitionId | uppercase }}</h1>
+      <div class="competition-detail__title-row">
+        <div>
+          <span class="competition-detail__code">{{ fvm.competition?.code ?? fvm.competitionId }}</span>
+          <h1 class="competition-detail__title">{{ fvm.competition?.name ?? fvm.competitionId }}</h1>
+        </div>
+        <button
+          type="button"
+          class="competition-detail__follow"
+          [class.competition-detail__follow--active]="fvm.following"
+          [attr.aria-pressed]="fvm.following"
+          (click)="onFollowToggle(fvm)"
+        >
+          {{ fvm.following ? 'Following' : 'Follow' }}
+        </button>
+      </div>
     </header>
 
     <section class="competition-detail__block">
       <h2 class="competition-detail__heading">Upcoming fixtures</h2>
       @if (fixtures$ | async; as fixtures) {
         @if (fixtures.length > 0) {
-          <ds-list>
+          <ul class="competition-detail__fixtures">
             @for (fixture of fixtures; track fixture.id) {
-              <ds-list-item>
+              <li>
                 <mfe-competition-fixture-row [fixture]="fixture" />
-              </ds-list-item>
+              </li>
             }
-          </ds-list>
+          </ul>
         } @else {
           <p class="competition-detail__empty">No upcoming fixtures.</p>
         }

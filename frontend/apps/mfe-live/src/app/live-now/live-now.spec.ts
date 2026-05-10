@@ -1,8 +1,12 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+import { AUTH_SERVICE, type AuthService } from '@platform/auth';
+import { PROFILE_SERVICE, type ProfileService } from '@platform/profile';
 import type { MatchSummary } from '@platform/shared-types';
 import { SPORTS_DATA_SERVICE, SportsDataService } from '@platform/sports-data';
 import { of } from 'rxjs';
 import { LiveNow } from './live-now';
+
+const stubUser = { userId: 'u-test', displayName: 'Test', email: 'test@test.com' };
 
 const fakeMatches: readonly MatchSummary[] = [
   {
@@ -16,43 +20,80 @@ const fakeMatches: readonly MatchSummary[] = [
   },
 ];
 
+function makeSportsStub(overrides: Partial<SportsDataService> = {}): SportsDataService {
+  return {
+    getLiveMatches: () => of(fakeMatches),
+    getMatch: () => of(undefined),
+    getFixtures: () => of([]),
+    getStandings: () => of(undefined),
+    getTeamFixtures: () => of([]),
+    getTeamStandings: () => of([]),
+    getTeam: () => of(undefined),
+    ...overrides,
+  };
+}
+
+function makeAuthStub(): AuthService {
+  return {
+    currentUser$: of(stubUser),
+    isAuthenticated$: of(true),
+  };
+}
+
+function makeProfileStub(overrides: Partial<ProfileService> = {}): ProfileService {
+  return {
+    getFavoriteTeams: () => of([]),
+    getFavoriteCompetitions: () => of([]),
+    isFollowingTeam$: () => of(false),
+    isFollowingCompetition$: () => of(false),
+    followTeam: () => of(void 0),
+    unfollowTeam: () => of(void 0),
+    followCompetition: () => of(void 0),
+    unfollowCompetition: () => of(void 0),
+    ...overrides,
+  };
+}
+
+async function setup(
+  sportsStub = makeSportsStub(),
+  profileStub = makeProfileStub()
+) {
+  await TestBed.configureTestingModule({
+    imports: [LiveNow],
+    providers: [
+      { provide: SPORTS_DATA_SERVICE, useValue: sportsStub },
+      { provide: AUTH_SERVICE, useValue: makeAuthStub() },
+      { provide: PROFILE_SERVICE, useValue: profileStub },
+    ],
+  }).compileComponents();
+  const fixture = TestBed.createComponent(LiveNow);
+  fixture.detectChanges();
+  return fixture;
+}
+
 describe('LiveNow', () => {
-  let fixture: ComponentFixture<LiveNow>;
+  afterEach(() => TestBed.resetTestingModule());
 
-  beforeEach(async () => {
-    const stub: SportsDataService = {
-      getLiveMatches: () => of(fakeMatches),
-      getMatch: () => of(undefined),
-      getFixtures: () => of([]),
-      getStandings: () => of(undefined),
-    };
-    await TestBed.configureTestingModule({
-      imports: [LiveNow],
-      providers: [{ provide: SPORTS_DATA_SERVICE, useValue: stub }],
-    }).compileComponents();
-    fixture = TestBed.createComponent(LiveNow);
-    fixture.detectChanges();
-  });
-
-  it('renders one match-card per match', () => {
+  it('renders one match-card per match', async () => {
+    const fixture = await setup();
     const cards = fixture.nativeElement.querySelectorAll('mfe-live-match-card');
     expect(cards.length).toBe(1);
   });
 
   it('renders the empty state when no matches', async () => {
-    const empty: SportsDataService = {
-      getLiveMatches: () => of([]),
-      getMatch: () => of(undefined),
-      getFixtures: () => of([]),
-      getStandings: () => of(undefined),
-    };
-    TestBed.resetTestingModule();
-    await TestBed.configureTestingModule({
-      imports: [LiveNow],
-      providers: [{ provide: SPORTS_DATA_SERVICE, useValue: empty }],
-    }).compileComponents();
-    const f = TestBed.createComponent(LiveNow);
-    f.detectChanges();
-    expect(f.nativeElement.textContent ?? '').toContain('No matches in progress');
+    const fixture = await setup(makeSportsStub({ getLiveMatches: () => of([]) }));
+    expect(fixture.nativeElement.textContent ?? '').toContain('No matches in progress');
+  });
+
+  it('calls followTeam when clicking an unfollowed team follow button', async () => {
+    const profileStub = makeProfileStub();
+    const followSpy = jest.spyOn(profileStub, 'followTeam').mockReturnValue(of(void 0));
+
+    const fixture = await setup(makeSportsStub(), profileStub);
+
+    const buttons: NodeListOf<HTMLButtonElement> = fixture.nativeElement.querySelectorAll('button.match-card__follow');
+    buttons[0].click();
+
+    expect(followSpy).toHaveBeenCalledWith('u-test', expect.objectContaining({ id: 't1' }));
   });
 });

@@ -1,0 +1,25 @@
+<div
+  class="team-fixture-row"
+  [class.team-fixture-row--pl]="fixture.competition.code === 'PL'"
+  [class.team-fixture-row--ucl]="fixture.competition.code === 'UCL'"
+  [class.team-fixture-row--liga]="fixture.competition.code === 'LIGA'"
+  [class.team-fixture-row--int]="fixture.competition.code === 'INT'"
+>
+  <time class="team-fixture-row__date" [attr.datetime]="fixture.kickoffAt">
+    <span class="team-fixture-row__day">{{ fixture.kickoffAt | date:'EEE' }}</span>
+    <strong>{{ fixture.kickoffAt | date:'d' }}</strong>
+    <span class="team-fixture-row__time">{{ fixture.kickoffAt | date:'HH:mm' }}</span>
+  </time>
+  <span class="team-fixture-row__comp">{{ fixture.competition.code }}</span>
+  <span class="team-fixture-row__matchup">
+    @if (fixture.home.id === teamId) {
+      <span class="team-fixture-row__prep">vs</span>
+      {{ fixture.away.name }}
+      <span class="team-fixture-row__venue team-fixture-row__venue--home">HOME</span>
+    } @else {
+      <span class="team-fixture-row__prep">at</span>
+      {{ fixture.home.name }}
+      <span class="team-fixture-row__venue team-fixture-row__venue--away">AWAY</span>
+    }
+  </span>
+</div>

@@ -1,25 +1,94 @@
 :host {
   display: block;
-  padding: var(--ds-space-5) var(--ds-space-4);
 }
 
 .live-now {
-  max-width: 48rem;
+  max-width: 80rem;
   margin: 0 auto;
+  padding: var(--ds-space-5);
+}
 
-  &__header {
-    margin-bottom: var(--ds-space-4);
+.live-now__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ds-space-4);
+  margin-bottom: var(--ds-space-5);
+}
+
+.live-now__title {
+  font-family: var(--font-display);
+  font-size: var(--ds-font-size-3xl);
+  letter-spacing: 0.02em;
+  line-height: 0.95;
+  color: var(--ink);
+  margin: 0;
+}
+
+.live-now__title em {
+  font-style: normal;
+  color: var(--ink-muted);
+  font-size: var(--ds-font-size-2xl);
+}
+
+.live-now__count {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  padding: 6px 12px;
+  background: var(--pink);
+  color: var(--bg);
+  border-radius: var(--ds-radius-sm);
+  font-family: var(--font-display);
+  font-size: var(--ds-font-size-md);
+  letter-spacing: 0.08em;
+}
+
+.live-now__pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--bg);
+  animation: live-now-blink 1s ease-in-out infinite;
+}
+
+@keyframes live-now-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.live-now__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(20rem, 100%), 1fr));
+  gap: var(--ds-space-3);
+}
+
+/* Featured (first) match spans the full row as a hero card. */
+.live-now__grid > mfe-live-match-card:first-child {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 1280px) {
+  .live-now__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.live-now__empty {
+  color: var(--ds-color-text-muted);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .live-now {
+    padding: var(--ds-space-4);
   }
 
-  &__title {
-    margin: 0;
+  .live-now__title {
+    font-size: var(--ds-font-size-2xl);
+  }
+
+  .live-now__title em {
     font-size: var(--ds-font-size-xl);
-    font-weight: var(--ds-font-weight-bold);
-    color: var(--ds-color-text);
-  }
-
-  &__empty {
-    color: var(--ds-color-text-muted);
-    font-size: var(--ds-font-size-md);
   }
 }

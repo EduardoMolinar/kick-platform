@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pitch — Design Direction Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,800&family=Bebas+Neue&family=Archivo:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFAF8;
+    --ink: #0A0A0A;
+    --muted: #5A5A5A;
+    --rule: #E5E2DB;
+    --body: 'Inter', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--ink); font-family: var(--body);
+    -webkit-font-smoothing: antialiased; line-height: 1.5; min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 64px 32px 96px; }
+
+  .hero { margin-bottom: 64px; padding-bottom: 32px; border-bottom: 1.5px solid var(--ink); }
+  .hero__kicker {
+    font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--muted); margin-bottom: 12px;
+  }
+  .hero__title {
+    font-family: 'Fraunces', serif; font-weight: 800; font-size: 64px;
+    font-variation-settings: 'opsz' 144;
+    letter-spacing: -0.03em; line-height: 1; margin-bottom: 16px;
+  }
+  .hero__sub { font-size: 17px; max-width: 70ch; color: #2a2a2a; line-height: 1.55; }
+
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-bottom: 48px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    display: flex; flex-direction: column;
+    border: 1.5px solid var(--ink); border-radius: 0;
+    overflow: hidden;
+    background: white;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.1); }
+
+  .card__hero { padding: 48px 32px; min-height: 280px; display: flex; flex-direction: column; justify-content: space-between; }
+
+  /* HERO A — STADIUM FLOODLIGHT */
+  .card--a .card__hero {
+    background: #0A0A0B; color: #F5F5F7;
+  }
+  .card--a .card__hero-mark {
+    font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 14px;
+    color: #00FFA3; letter-spacing: 0.18em;
+  }
+  .card--a .card__hero-title {
+    font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 44px;
+    letter-spacing: -0.03em; line-height: 0.95;
+  }
+  .card--a .card__hero-mock {
+    margin-top: 24px; padding: 16px; border-radius: 12px;
+    background: #131318; border: 1px solid #2A2A33;
+  }
+  .card--a .card__hero-mock-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 14px; font-weight: 700; }
+  .card--a .card__hero-mock-row span:last-child { font-family: 'Archivo'; font-weight: 900; font-size: 22px; color: #00FFA3; }
+  .card--a .card__hero-live { font-family: monospace; font-size: 11px; color: #00FFA3; letter-spacing: 0.1em; }
+
+  /* HERO B — CONCOURSE */
+  .card--b .card__hero {
+    background: #F5F1EA; color: #0B0B0B;
+  }
+  .card--b .card__hero-mark {
+    font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; font-weight: 500;
+    color: #FF4500; letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .card--b .card__hero-title {
+    font-family: 'Fraunces', serif; font-weight: 800; font-size: 56px;
+    font-variation-settings: 'opsz' 144;
+    letter-spacing: -0.04em; line-height: 0.95;
+  }
+  .card--b .card__hero-title em { font-style: italic; font-weight: 400; color: #5A554C; }
+  .card--b .card__hero-mock { margin-top: 20px; }
+  .card--b .card__hero-mock-row {
+    display: grid; grid-template-columns: 1fr auto; align-items: baseline;
+    padding: 10px 0; border-bottom: 1px solid rgba(11,11,11,0.12);
+    font-family: 'Fraunces', serif;
+  }
+  .card--b .card__hero-mock-row span:first-child { font-weight: 600; font-size: 18px; }
+  .card--b .card__hero-mock-row span:last-child { font-weight: 800; font-size: 22px; }
+  .card--b .card__hero-live {
+    font-family: 'Fraunces', serif; font-style: italic; font-size: 12px;
+    color: #D90429; letter-spacing: 0.12em; text-transform: uppercase;
+  }
+
+  /* HERO C — LIVE WIRE */
+  .card--c .card__hero {
+    background: #0E0E10; color: white;
+    background-image:
+      radial-gradient(ellipse at top right, rgba(255, 31, 138, 0.3), transparent 60%),
+      radial-gradient(ellipse at bottom left, rgba(0, 209, 255, 0.18), transparent 60%);
+  }
+  .card--c .card__hero-mark {
+    font-family: 'Bebas Neue', sans-serif; font-size: 16px;
+    color: #C8FF00; letter-spacing: 0.15em;
+  }
+  .card--c .card__hero-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 64px;
+    letter-spacing: 0.02em; line-height: 0.9;
+  }
+  .card--c .card__hero-title em { color: #C8FF00; font-style: italic; }
+  .card--c .card__hero-mock {
+    margin-top: 24px; padding: 16px;
+    background: rgba(24,24,28,0.7);
+    border-left: 4px solid #FF1F8A;
+  }
+  .card--c .card__hero-mock-row {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: 'Bebas Neue'; padding: 4px 0;
+  }
+  .card--c .card__hero-mock-row span:first-child { font-size: 22px; letter-spacing: 0.04em; }
+  .card--c .card__hero-mock-row span:last-child { font-size: 28px; color: #C8FF00; }
+  .card--c .card__hero-live { font-family: 'Bebas Neue'; font-size: 14px; color: #FF1F8A; letter-spacing: 0.1em; }
+
+  .card__body { padding: 28px 32px 32px; }
+  .card__name {
+    font-family: 'Fraunces', serif; font-weight: 800; font-size: 28px;
+    letter-spacing: -0.02em; line-height: 1; margin-bottom: 8px;
+  }
+  .card__tagline {
+    font-size: 14px; color: var(--muted); font-style: italic;
+    margin-bottom: 20px;
+  }
+  .card__row {
+    display: flex; justify-content: space-between; padding: 10px 0;
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+  }
+  .card__row span:first-child { color: var(--muted); }
+  .card__row span:last-child { font-weight: 600; text-align: right; max-width: 60%; }
+
+  .card__cta {
+    display: block; text-align: center;
+    margin-top: 24px; padding: 14px;
+    background: var(--ink); color: var(--bg);
+    font-weight: 700; font-size: 14px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    transition: background 0.15s ease;
+  }
+  .card__cta:hover { background: #2a2a2a; }
+
+  .footer {
+    margin-top: 64px; padding-top: 32px; border-top: 1.5px solid var(--ink);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+    font-size: 13px; color: var(--muted);
+  }
+  .footer p { max-width: 60ch; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="hero">
+    <p class="hero__kicker">Design review · Pitch · 2026</p>
+    <h1 class="hero__title">Three directions for the redesign.</h1>
+    <p class="hero__sub">
+      The current product is functional but neutral. Football has a strong visual culture — broadcast graphics, kit design, magazine spreads, sticker albums — and the platform should borrow from it instead of looking like a generic dashboard. Below are three internally-coherent directions. Open each, scroll the whole page, then pick the mood that fits.
+    </p>
+  </header>
+
+  <div class="grid">
+
+    <article class="card card--a">
+      <div class="card__hero">
+        <div>
+          <p class="card__hero-mark">DIRECTION · A</p>
+        </div>
+        <div>
+          <h2 class="card__hero-title">STADIUM<br>FLOODLIGHT</h2>
+          <div class="card__hero-mock">
+            <div class="card__hero-mock-row">
+              <span style="color:#A0A0AA">REAL MADRID</span>
+              <span>1</span>
+            </div>
+            <div class="card__hero-mock-row">
+              <span style="color:#A0A0AA">MAN CITY</span>
+              <span style="color:#F5F5F7 !important">1</span>
+            </div>
+            <div style="margin-top:8px"><span class="card__hero-live">● LIVE 67'</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card__body">
+        <h3 class="card__name">Stadium Floodlight</h3>
+        <p class="card__tagline">Cinematic dark, neon live indicators</p>
+        <div class="card__row"><span>Mood</span><span>Watching the final at night</span></div>
+        <div class="card__row"><span>Surface</span><span>#0A0A0B near-black</span></div>
+        <div class="card__row"><span>Display type</span><span>Archivo Black</span></div>
+        <div class="card__row"><span>Brand accent</span><span>Electric green #00FFA3</span></div>
+        <div class="card__row"><span>Best for</span><span>Evening viewing, broadcast feel</span></div>
+        <a href="01-stadium-floodlight.html" class="card__cta">View full mockup →</a>
+      </div>
+    </article>
+
+    <article class="card card--b">
+      <div class="card__hero">
+        <div>
+          <p class="card__hero-mark">DIRECTION · B</p>
+        </div>
+        <div>
+          <h2 class="card__hero-title">Concourse<em>.</em></h2>
+          <div class="card__hero-mock">
+            <div class="card__hero-mock-row">
+              <span>Real Madrid</span>
+              <span>1</span>
+            </div>
+            <div class="card__hero-mock-row">
+              <span>Manchester City</span>
+              <span>1</span>
+            </div>
+            <div style="margin-top:10px"><span class="card__hero-live">— Live · 67'</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card__body">
+        <h3 class="card__name">Concourse</h3>
+        <p class="card__tagline">Editorial light, serif display, premium magazine</p>
+        <div class="card__row"><span>Mood</span><span>Premium sports broadsheet</span></div>
+        <div class="card__row"><span>Surface</span><span>#F5F1EA warm cream</span></div>
+        <div class="card__row"><span>Display type</span><span>Fraunces (variable serif)</span></div>
+        <div class="card__row"><span>Brand accent</span><span>Saturated orange #FF4500</span></div>
+        <div class="card__row"><span>Best for</span><span>Daylight reading, data density</span></div>
+        <a href="02-concourse.html" class="card__cta">View full mockup →</a>
+      </div>
+    </article>
+
+    <article class="card card--c">
+      <div class="card__hero">
+        <div>
+          <p class="card__hero-mark">DIRECTION · C</p>
+        </div>
+        <div>
+          <h2 class="card__hero-title">LIVE<em>/</em>WIRE</h2>
+          <div class="card__hero-mock">
+            <div class="card__hero-mock-row">
+              <span>RMA</span>
+              <span>1</span>
+            </div>
+            <div class="card__hero-mock-row">
+              <span>MCI</span>
+              <span>1</span>
+            </div>
+            <div style="margin-top:10px"><span class="card__hero-live">▎ LIVE 67'</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card__body">
+        <h3 class="card__name">Live Wire</h3>
+        <p class="card__tagline">Kinetic, sporty, brand-forward</p>
+        <div class="card__row"><span>Mood</span><span>Goal-celebration energy</span></div>
+        <div class="card__row"><span>Surface</span><span>#0E0E10 charcoal + gradients</span></div>
+        <div class="card__row"><span>Display type</span><span>Bebas Neue (ultra-condensed)</span></div>
+        <div class="card__row"><span>Brand accent</span><span>Electric lime #C8FF00</span></div>
+        <div class="card__row"><span>Best for</span><span>Distinctive identity, social-native</span></div>
+        <a href="03-live-wire.html" class="card__cta">View full mockup →</a>
+      </div>
+    </article>
+
+  </div>
+
+  <footer class="footer">
+    <p>
+      Each mockup is a self-contained HTML/CSS file. Open in a browser, resize the window to see the responsive breakpoint at 768px (A, C) or 900px (B). After you pick a direction, the next step is translating it into design tokens, primitives in the design system, and full per-page redesigns of Home, Live, Competition, Team, and Profile.
+    </p>
+    <p>Pitch · Internal design review · April 2026</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
