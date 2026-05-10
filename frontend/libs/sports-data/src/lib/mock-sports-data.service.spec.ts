@@ -52,4 +52,51 @@ describe('MockSportsDataService', () => {
     const standing = await firstValueFrom(service.getStandings('int'));
     expect(standing).toBeUndefined();
   });
+
+  it('emits fixtures for a known team', async () => {
+    const fixtures = await firstValueFrom(service.getTeamFixtures('t-ars'));
+    expect(fixtures.length).toBeGreaterThan(0);
+    expect(fixtures.every((f) => f.home.id === 't-ars' || f.away.id === 't-ars')).toBe(true);
+  });
+
+  it('emits an empty array for an unknown teamId', async () => {
+    const fixtures = await firstValueFrom(service.getTeamFixtures('unknown'));
+    expect(fixtures).toEqual([]);
+  });
+
+  it('emits team fixtures sorted by kickoffAt ascending', async () => {
+    const fixtures = await firstValueFrom(service.getTeamFixtures('t-rma'));
+    expect(fixtures.length).toBeGreaterThan(1);
+    for (let i = 1; i < fixtures.length; i++) {
+      expect(fixtures[i - 1].kickoffAt.localeCompare(fixtures[i].kickoffAt)).toBeLessThanOrEqual(0);
+    }
+  });
+
+  it('emits team standings for a known team', async () => {
+    const standings = await firstValueFrom(service.getTeamStandings('t-ars'));
+    expect(standings.length).toBeGreaterThan(0);
+    expect(standings.every((s) => s.row.team.id === 't-ars')).toBe(true);
+  });
+
+  it('emits empty team standings for an unknown teamId', async () => {
+    const standings = await firstValueFrom(service.getTeamStandings('unknown'));
+    expect(standings).toEqual([]);
+  });
+
+  it('resolves a team identity by id from standings', async () => {
+    const team = await firstValueFrom(service.getTeam('t-ars'));
+    expect(team).toBeDefined();
+    expect(team?.name).toBe('Arsenal');
+  });
+
+  it('resolves a team identity from live matches when not in standings', async () => {
+    // 't-bra' (Brazil) appears in live matches but not in standings (INT has none).
+    const team = await firstValueFrom(service.getTeam('t-bra'));
+    expect(team?.name).toBe('Brazil');
+  });
+
+  it('emits undefined for an unknown teamId', async () => {
+    const team = await firstValueFrom(service.getTeam('does-not-exist'));
+    expect(team).toBeUndefined();
+  });
 });

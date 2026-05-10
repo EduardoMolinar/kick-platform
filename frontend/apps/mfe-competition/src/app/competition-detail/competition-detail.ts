@@ -1,8 +1,7 @@
-import { AsyncPipe, UpperCasePipe } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AUTH_SERVICE, type AuthSession } from '@platform/auth';
-import { DsList, DsListItem } from '@platform/design-system';
 import { PROFILE_SERVICE, type ProfileService } from '@platform/profile';
 import type { Competition, Fixture, Standing } from '@platform/shared-types';
 import { SPORTS_DATA_SERVICE } from '@platform/sports-data';
@@ -14,21 +13,14 @@ import { StandingsTable } from './standings-table/standings-table';
 interface CompetitionDetailVm {
   user: AuthSession;
   competitionId: string;
+  competition: Competition | undefined;
   following: boolean;
 }
 
 @Component({
   selector: 'mfe-competition-competition-detail',
   standalone: true,
-  imports: [
-    AsyncPipe,
-    UpperCasePipe,
-    RouterLink,
-    DsList,
-    DsListItem,
-    FixtureRow,
-    StandingsTable,
-  ],
+  imports: [AsyncPipe, RouterLink, FixtureRow, StandingsTable],
   templateUrl: './competition-detail.html',
   styleUrl: './competition-detail.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,7 +53,12 @@ export class CompetitionDetail {
   ]).pipe(
     switchMap(([user, compId]) =>
       this.profile.isFollowingCompetition$(user.userId, compId).pipe(
-        map((following) => ({ user, competitionId: compId, following }))
+        map((following) => ({
+          user,
+          competitionId: compId,
+          competition: COMPETITION_BY_ID[compId],
+          following,
+        }))
       )
     )
   );
@@ -72,6 +69,9 @@ export class CompetitionDetail {
     const action = vm.following
       ? this.profile.unfollowCompetition(vm.user.userId, vm.competitionId)
       : this.profile.followCompetition(vm.user.userId, competition);
-    firstValueFrom(action);
+    const verb = vm.following ? 'unfollow' : 'follow';
+    void firstValueFrom(action).catch((err) => {
+      console.error(`Failed to ${verb} competition ${vm.competitionId}`, err);
+    });
   }
 }

@@ -60,6 +60,9 @@ function makeSportsStub(overrides: Partial<SportsDataService> = {}): SportsDataS
     getMatch: () => of(undefined),
     getFixtures: () => of(plFixtures),
     getStandings: () => of(plStanding),
+    getTeamFixtures: () => of([]),
+    getTeamStandings: () => of([]),
+    getTeam: () => of(undefined),
     ...overrides,
   };
 }

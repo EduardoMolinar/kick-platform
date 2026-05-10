@@ -4,31 +4,35 @@
   </header>
 
   @if (vm$ | async; as vm) {
-    <ds-list>
+    <div class="competition-list__grid">
       @for (competition of competitions; track competition.id) {
-        <ds-list-item>
-          <div class="competition-list__item">
-            <a
-              class="competition-list__link"
-              [routerLink]="['/competition', competition.id]"
-            >
-              <ds-card variant="flat">
-                <span class="competition-list__code">{{ competition.code }}</span>
-                <span class="competition-list__name">{{ competition.name }}</span>
-              </ds-card>
-            </a>
-            <button
-              type="button"
-              class="competition-list__follow"
-              [class.competition-list__follow--active]="vm.followMap.get(competition.id)"
-              [attr.aria-pressed]="vm.followMap.get(competition.id) ?? false"
-              (click)="onFollowToggle(vm.user, competition, vm.followMap.get(competition.id) ?? false)"
-            >
-              {{ (vm.followMap.get(competition.id) ?? false) ? 'Following' : 'Follow' }}
-            </button>
-          </div>
-        </ds-list-item>
+        <article
+          class="competition-list__card"
+          [class.competition-list__card--pl]="competition.code === 'PL'"
+          [class.competition-list__card--ucl]="competition.code === 'UCL'"
+          [class.competition-list__card--liga]="competition.code === 'LIGA'"
+          [class.competition-list__card--int]="competition.code === 'INT'"
+        >
+          <a
+            class="competition-list__link"
+            [routerLink]="['/competition', competition.id]"
+          >
+            <span class="competition-list__bg-mark">{{ competition.code }}</span>
+            <span class="competition-list__code">{{ competition.code }}</span>
+            <span class="competition-list__name">{{ competition.name }}</span>
+            <span class="competition-list__cta-arrow" aria-hidden="true">→</span>
+          </a>
+          <button
+            type="button"
+            class="competition-list__follow"
+            [class.competition-list__follow--active]="vm.followMap.get(competition.id)"
+            [attr.aria-pressed]="vm.followMap.get(competition.id) ?? false"
+            (click)="onFollowToggle(vm.user, competition, vm.followMap.get(competition.id) ?? false)"
+          >
+            {{ (vm.followMap.get(competition.id) ?? false) ? 'Following' : 'Follow' }}
+          </button>
+        </article>
       }
-    </ds-list>
+    </div>
   }
 </section>

@@ -1,0 +1,29 @@
+<section class="team-list">
+  @if (vm$ | async; as vm) {
+    <header class="team-list__header">
+      <h1 class="team-list__title">Your teams</h1>
+    </header>
+
+    @if (vm.teams.length > 0) {
+      <div class="team-list__grid">
+        @for (team of vm.teams; track team.id) {
+          <a [routerLink]="['/team', team.id]" class="team-list__card">
+            <span class="team-list__bg-mark">{{ team.shortName ?? team.name.substring(0, 3) }}</span>
+            <span class="team-list__short">{{ team.shortName ?? '—' }}</span>
+            <span class="team-list__name">{{ team.name }}</span>
+            <span class="team-list__cta-arrow" aria-hidden="true">→</span>
+          </a>
+        }
+      </div>
+    } @else {
+      <p class="team-list__empty">
+        You don't follow any teams yet.
+        Follow teams from the
+        <a routerLink="/live" class="team-list__cta">Live</a>
+        or
+        <a routerLink="/competition" class="team-list__cta">Competitions</a>
+        pages.
+      </p>
+    }
+  }
+</section>

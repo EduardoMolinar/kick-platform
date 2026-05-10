@@ -62,7 +62,8 @@
       "Bash(curl -s -I http://localhost:4201/Routes.js)",
       "Bash(node -e \"const g = require\\('./graph.json'\\); const deps = g.graph.dependencies; for \\(const k of Object.keys\\(deps\\)\\) { const ext = deps[k].filter\\(d => !d.target.startsWith\\('npm:'\\)\\).map\\(d => d.target\\); if \\(ext.length\\) console.log\\(k + ' -> ' + ext.join\\(', '\\)\\); }\")",
       "Bash(curl -s http://localhost:4202/remoteEntry.json)",
-      "Bash(curl -s http://localhost:4200)"
+      "Bash(curl -s http://localhost:4200)",
+      "Bash(node -e \"const g=require\\('./graph.json'\\); const deps=g.graph.dependencies; ['mfe-live','mfe-competition'].forEach\\(p=>{const d=deps[p]||[];console.log\\(p+' deps:',d.map\\(x=>x.target\\).join\\(', '\\)\\)}\\); const shouldNotHave=['mfe-home','mfe-team','shell']; shouldNotHave.forEach\\(p=>{const d=\\(deps[p]||[]\\).map\\(x=>x.target\\); if\\(d.includes\\('profile'\\)\\)console.error\\(p+' WRONGLY depends on profile!'\\); else console.log\\(p+': no profile dep \\(ok\\)'\\)}\\)\")"
     ]
   },
   "enabledMcpjsonServers": [

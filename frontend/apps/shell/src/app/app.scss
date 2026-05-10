@@ -1,14 +1,21 @@
 .shell__header {
   display: flex;
   align-items: center;
+  gap: var(--ds-space-3);
 
   ds-top-nav {
     flex: 1;
   }
 }
 
-.shell__user {
+.shell__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-3);
   padding: 0 var(--ds-space-4);
+}
+
+.shell__user {
   font-size: var(--ds-font-size-sm);
   color: var(--ds-color-text-muted);
   white-space: nowrap;

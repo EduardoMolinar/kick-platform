@@ -1,0 +1,144 @@
+:host {
+  display: block;
+}
+
+.team-standings-card {
+  position: relative;
+  padding: var(--ds-space-5);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--ds-radius-lg);
+  overflow: hidden;
+  min-height: 9rem;
+  transition: border-color var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+.team-standings-card:hover {
+  border-color: var(--border-strong);
+}
+
+/* Competition-keyed left edge stripe */
+.team-standings-card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--ink-dim);
+}
+
+.team-standings-card--pl::after { background: var(--pink); }
+.team-standings-card--ucl::after { background: var(--violet); }
+.team-standings-card--liga::after { background: var(--orange); }
+.team-standings-card--int::after { background: var(--cyan); }
+
+/* Background watermark — the position number in massive lime ghost */
+.team-standings-card__bg-rank {
+  position: absolute;
+  top: -1rem;
+  right: -0.75rem;
+  font-family: var(--font-display);
+  font-size: 11rem;
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: rgba(200, 255, 0, 0.07);
+  pointer-events: none;
+  user-select: none;
+}
+
+.team-standings-card--pl .team-standings-card__bg-rank {
+  color: rgba(255, 31, 138, 0.09);
+}
+.team-standings-card--ucl .team-standings-card__bg-rank {
+  color: rgba(185, 69, 255, 0.09);
+}
+.team-standings-card--liga .team-standings-card__bg-rank {
+  color: rgba(255, 107, 53, 0.09);
+}
+
+/* === HEADER === */
+.team-standings-card__top {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: var(--ds-space-3);
+}
+
+.team-standings-card__code {
+  font-family: var(--font-mono);
+  font-size: var(--ds-font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+}
+
+.team-standings-card--pl .team-standings-card__code { color: var(--pink); }
+.team-standings-card--ucl .team-standings-card__code { color: var(--violet); }
+.team-standings-card--liga .team-standings-card__code { color: var(--orange); }
+
+.team-standings-card__comp {
+  font-family: var(--font-display);
+  font-size: var(--ds-font-size-md);
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+
+/* === RANK === */
+.team-standings-card__rank {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: var(--ds-space-4);
+}
+
+.team-standings-card__pos {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  letter-spacing: -0.02em;
+  line-height: 0.85;
+  color: var(--lime);
+}
+
+.team-standings-card__suffix {
+  font-family: var(--font-mono);
+  font-size: var(--ds-font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+}
+
+/* === STATS === */
+.team-standings-card__stats {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--ds-space-3);
+  padding-top: var(--ds-space-3);
+  border-top: 1px solid var(--border);
+}
+
+.team-standings-card__stat-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--ink-dim);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.team-standings-card__stat-value {
+  font-family: var(--font-display);
+  font-size: var(--ds-font-size-xl);
+  letter-spacing: 0.01em;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.team-standings-card__stat-value--ok {
+  color: var(--lime);
+}

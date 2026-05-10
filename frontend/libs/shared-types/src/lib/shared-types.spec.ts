@@ -2,6 +2,7 @@ import { Competition, Team } from './shared-types';
 import { MatchSummary } from './match';
 import { Fixture } from './fixture';
 import { Standing, StandingRow } from './standings';
+import { TeamCompetitionStanding } from './team-standing';
 
 describe('shared-types', () => {
   it('should accept a valid Team shape', () => {
@@ -61,5 +62,26 @@ describe('shared-types', () => {
     };
     expect(standing.rows.length).toBe(1);
     expect(standing.rows[0].points).toBe(25);
+  });
+
+  it('should accept a valid TeamCompetitionStanding shape', () => {
+    const row: StandingRow = {
+      position: 2,
+      team: { id: 't-ars', name: 'Arsenal' },
+      played: 12,
+      won: 9,
+      drawn: 1,
+      lost: 2,
+      goalsFor: 28,
+      goalsAgainst: 10,
+      goalDifference: 18,
+      points: 28,
+    };
+    const entry: TeamCompetitionStanding = {
+      competition: { id: 'pl', name: 'Premier League', code: 'PL' },
+      row,
+    };
+    expect(entry.row.position).toBe(2);
+    expect(entry.competition.code).toBe('PL');
   });
 });

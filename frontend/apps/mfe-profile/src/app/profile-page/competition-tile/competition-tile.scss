@@ -3,45 +3,107 @@
 }
 
 .competition-tile {
-  &__content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--ds-space-3);
-  }
+  position: relative;
+  padding: var(--ds-space-4) var(--ds-space-5);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--ink-dim);
+  border-radius: var(--ds-radius-md);
+  overflow: hidden;
+  transition: border-color var(--ds-duration-fast) var(--ds-easing-standard);
+}
 
-  &__info {
-    flex: 1;
-  }
+.competition-tile--pl { border-left-color: var(--pink); }
+.competition-tile--ucl { border-left-color: var(--violet); }
+.competition-tile--liga { border-left-color: var(--orange); }
+.competition-tile--int { border-left-color: var(--cyan); }
 
-  &__unfollow {
-    flex-shrink: 0;
-    padding: var(--ds-space-1) var(--ds-space-2);
-    border: 1px solid var(--ds-color-border);
-    border-radius: var(--ds-radius-sm);
-    background: transparent;
-    color: var(--ds-color-text-muted);
-    font-size: var(--ds-font-size-xs);
-    cursor: pointer;
+.competition-tile:hover {
+  border-color: var(--border-strong);
+}
 
-    &:hover {
-      border-color: var(--ds-color-danger);
-      color: var(--ds-color-danger);
-    }
-  }
+/* Big background watermark using the competition code */
+.competition-tile__bg-mark {
+  position: absolute;
+  top: 50%;
+  right: var(--ds-space-3);
+  transform: translateY(-50%);
+  font-family: var(--font-display);
+  font-size: 5rem;
+  line-height: 0.85;
+  letter-spacing: -0.04em;
+  color: rgba(200, 255, 0, 0.07);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
 
-  &__code {
-    display: block;
-    font-size: var(--ds-font-size-xs);
-    font-weight: var(--ds-font-weight-bold);
-    letter-spacing: 0.04em;
-    color: var(--ds-color-text-muted);
-    text-transform: uppercase;
-  }
+.competition-tile--pl .competition-tile__bg-mark { color: rgba(255, 31, 138, 0.09); }
+.competition-tile--ucl .competition-tile__bg-mark { color: rgba(185, 69, 255, 0.09); }
+.competition-tile--liga .competition-tile__bg-mark { color: rgba(255, 107, 53, 0.09); }
+.competition-tile--int .competition-tile__bg-mark { color: rgba(0, 209, 255, 0.09); }
 
-  &__name {
-    display: block;
-    font-size: var(--ds-font-size-md);
-    color: var(--ds-color-text);
-  }
+.competition-tile__content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-3);
+}
+
+.competition-tile__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.competition-tile__code {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--ds-font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.competition-tile--pl .competition-tile__code { color: var(--pink); }
+.competition-tile--ucl .competition-tile__code { color: var(--violet); }
+.competition-tile--liga .competition-tile__code { color: var(--orange); }
+.competition-tile--int .competition-tile__code { color: var(--cyan); }
+
+.competition-tile__name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--ds-font-size-xl);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.competition-tile__unfollow {
+  flex-shrink: 0;
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--ds-radius-pill);
+  padding: 4px 12px;
+  font-family: var(--font-display);
+  font-size: var(--ds-font-size-xs);
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition:
+    border-color var(--ds-duration-fast) var(--ds-easing-standard),
+    color var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+.competition-tile__unfollow:hover {
+  border-color: var(--ds-color-danger);
+  color: var(--ds-color-danger);
+}
+
+.competition-tile__unfollow:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 2px;
 }

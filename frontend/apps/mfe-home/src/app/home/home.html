@@ -17,8 +17,8 @@
         <h2 class="home__heading">Live now</h2>
         @if (vm.liveFromFavorites.length > 0) {
           <div class="home__live-grid">
-            @for (match of vm.liveFromFavorites; track match.id) {
-              <mfe-home-live-tile [match]="match" />
+            @for (match of vm.liveFromFavorites; track match.id; let first = $first) {
+              <mfe-home-live-tile [match]="match" [featured]="first" />
             }
           </div>
         } @else {

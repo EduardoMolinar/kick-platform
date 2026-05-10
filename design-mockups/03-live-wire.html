@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Wire — Design Direction C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter+Tight:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Surface */
+    --bg: #0E0E10;
+    --surface-1: #18181C;
+    --surface-2: #222229;
+    --surface-3: #2C2C36;
+    --border: #2A2A33;
+    --border-strong: #3F3F4A;
+
+    /* Ink */
+    --ink: #FFFFFF;
+    --ink-muted: #8E8E93;
+    --ink-dim: #5A5A60;
+
+    /* Brand colors — saturated */
+    --lime: #C8FF00;
+    --lime-dim: #94BF00;
+    --pink: #FF1F8A;
+    --cyan: #00D1FF;
+    --orange: #FF6B35;
+    --violet: #B945FF;
+
+    /* Type */
+    --display: 'Bebas Neue', 'Impact', sans-serif;
+    --body: 'Inter Tight', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+
+    /* Space */
+    --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px;
+    --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: var(--body); -webkit-font-smoothing: antialiased; }
+  body { min-height: 100vh; font-size: 15px; line-height: 1.5; overflow-x: hidden; }
+  a { color: inherit; text-decoration: none; }
+
+  /* TOP NAV */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(24px) saturate(140%);
+    background: rgba(14, 14, 16, 0.78);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav__inner {
+    max-width: 1320px; margin: 0 auto;
+    display: flex; align-items: center; gap: var(--s-6);
+    padding: var(--s-3) var(--s-5);
+  }
+  .nav__logo {
+    font-family: var(--display); font-size: 32px;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    transform: skew(-6deg);
+    display: flex; gap: 4px;
+  }
+  .nav__logo span:last-child { color: var(--lime); }
+  .nav__links { display: flex; gap: 0; margin-left: var(--s-6); flex: 1; }
+  .nav__link {
+    padding: var(--s-3) var(--s-4);
+    font-family: var(--display); font-size: 16px;
+    color: var(--ink-muted);
+    letter-spacing: 0.06em;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s ease;
+    text-transform: uppercase;
+  }
+  .nav__link:hover { color: var(--ink); }
+  .nav__link--active {
+    color: var(--lime);
+    border-bottom-color: var(--lime);
+  }
+  .nav__user {
+    display: flex; align-items: center; gap: var(--s-3);
+    padding: var(--s-2) var(--s-4);
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 13px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .nav__avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--lime);
+    display: grid; place-items: center;
+    font-family: var(--display); font-size: 14px;
+    color: var(--bg);
+  }
+
+  /* MAIN */
+  .main { max-width: 1320px; margin: 0 auto; padding: 0 var(--s-5); }
+
+  /* HERO STRIP */
+  .hero {
+    position: relative;
+    padding: var(--s-8) 0 var(--s-7);
+    overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0; z-index: -1;
+    background:
+      radial-gradient(ellipse 800px 400px at 80% 20%, rgba(255, 31, 138, 0.25), transparent 60%),
+      radial-gradient(ellipse 600px 600px at 0% 100%, rgba(0, 209, 255, 0.18), transparent 60%);
+    pointer-events: none;
+  }
+  .hero__top {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: var(--s-5); gap: var(--s-5);
+  }
+  .hero__greeting {
+    font-family: var(--display); font-size: 96px;
+    letter-spacing: 0.02em; line-height: 0.9;
+  }
+  .hero__greeting em {
+    font-style: italic; color: var(--lime);
+  }
+  .hero__date {
+    font-family: var(--mono); font-size: 12px; font-weight: 700;
+    color: var(--ink-muted); letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-align: right;
+  }
+  .hero__date strong { display: block; color: var(--ink); font-size: 24px; margin-bottom: 4px; letter-spacing: 0.05em; }
+  .hero__live-bar {
+    display: flex; gap: var(--s-3); align-items: center;
+    margin-top: var(--s-6);
+    padding-top: var(--s-5);
+    border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--ink-muted);
+    text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600;
+  }
+  .hero__live-pill {
+    display: inline-flex; align-items: center; gap: var(--s-2);
+    padding: 6px 12px;
+    background: var(--pink); color: var(--bg);
+    border-radius: 4px;
+    font-family: var(--display); font-size: 16px;
+    letter-spacing: 0.08em;
+  }
+  .hero__live-pill .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--bg);
+    animation: blink 1s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* DIAGONAL DIVIDER */
+  .diag {
+    position: relative;
+    height: 32px;
+    margin: var(--s-5) calc(-1 * var(--s-5));
+    background: linear-gradient(105deg, transparent 49.5%, var(--lime) 49.5%, var(--lime) 50.5%, transparent 50.5%);
+  }
+
+  /* SECTION HEADER */
+  .section { margin-bottom: var(--s-8); }
+  .section__head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: var(--s-5);
+    gap: var(--s-5);
+  }
+  .section__title {
+    font-family: var(--display); font-size: 56px;
+    letter-spacing: 0.02em; line-height: 1;
+    color: var(--ink);
+    display: flex; align-items: baseline; gap: var(--s-3);
+  }
+  .section__title::before {
+    content: ''; display: inline-block;
+    width: 6px; height: 36px;
+    background: var(--lime);
+    transform: skew(-12deg);
+  }
+  .section__title em { font-style: italic; color: var(--ink-muted); }
+  .section__count {
+    font-family: var(--mono); font-size: 12px; color: var(--lime);
+    font-weight: 700; letter-spacing: 0.12em;
+  }
+  .section__more {
+    font-family: var(--display); font-size: 18px;
+    color: var(--ink-muted);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .section__more:hover { color: var(--lime); }
+
+  /* HERO MATCH */
+  .feature {
+    position: relative;
+    padding: var(--s-6) var(--s-7) var(--s-6);
+    background:
+      linear-gradient(135deg, rgba(200, 255, 0, 0.08), rgba(255, 31, 138, 0.06));
+    border: 1px solid var(--border);
+    border-radius: 0;
+    overflow: hidden;
+    margin-bottom: var(--s-7);
+  }
+  .feature::before {
+    content: ''; position: absolute; top: 0; right: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--lime), var(--pink));
+  }
+  .feature__top {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: var(--s-6);
+  }
+  .feature__comp {
+    display: flex; align-items: center; gap: var(--s-3);
+    font-family: var(--display); font-size: 18px;
+    letter-spacing: 0.08em; color: var(--lime);
+  }
+  .feature__comp::before {
+    content: ''; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 12px var(--cyan);
+  }
+  .feature__minute {
+    display: flex; align-items: center; gap: var(--s-2);
+    font-family: var(--mono); font-size: 14px;
+    color: var(--pink); font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+  .feature__minute::before {
+    content: ''; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--pink);
+    animation: blink 1s ease-in-out infinite;
+  }
+  .feature__teams {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    gap: var(--s-7); align-items: center;
+  }
+  .feature__team { display: flex; flex-direction: column; gap: var(--s-2); }
+  .feature__team--away { align-items: flex-end; text-align: right; }
+  .feature__team-short {
+    font-family: var(--mono); font-size: 13px; font-weight: 700;
+    color: var(--ink-muted); letter-spacing: 0.12em;
+  }
+  .feature__team-name {
+    font-family: var(--display); font-size: 64px;
+    letter-spacing: 0.01em; line-height: 0.9;
+  }
+  .feature__score {
+    font-family: var(--display);
+    font-size: 168px; line-height: 0.85;
+    letter-spacing: -0.04em;
+    display: flex; gap: var(--s-5); align-items: baseline;
+  }
+  .feature__score-divider {
+    color: var(--lime);
+    font-size: 84px; transform: translateY(-12px);
+  }
+  .feature__bottom {
+    display: flex; justify-content: space-between;
+    margin-top: var(--s-6);
+    padding-top: var(--s-4);
+    border-top: 1px dashed var(--border-strong);
+    font-family: var(--mono); font-size: 12px;
+    color: var(--ink-muted); text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  /* MATCH PILLS */
+  .matches { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); }
+  .match-pill {
+    position: relative;
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    padding: var(--s-5);
+    transition: all 0.15s ease;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .match-pill::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px;
+  }
+  .match-pill--pl::before { background: var(--pink); }
+  .match-pill--liga::before { background: var(--orange); }
+  .match-pill--ucl::before { background: var(--violet); }
+  .match-pill:hover {
+    border-color: var(--border-strong);
+    background: var(--surface-2);
+    transform: translateX(2px);
+  }
+  .match-pill__top {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: var(--s-4);
+  }
+  .match-pill__comp {
+    font-family: var(--display); font-size: 14px;
+    letter-spacing: 0.08em;
+  }
+  .match-pill__comp--pl { color: var(--pink); }
+  .match-pill__comp--liga { color: var(--orange); }
+  .match-pill__comp--ucl { color: var(--violet); }
+  .match-pill__status {
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    color: var(--lime); letter-spacing: 0.06em;
+    display: flex; align-items: center; gap: var(--s-2);
+  }
+  .match-pill__status::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--lime); animation: blink 1s ease-in-out infinite;
+  }
+  .match-pill__status--ht { color: var(--ink-muted); }
+  .match-pill__status--ht::before { display: none; }
+  .match-pill__teams {
+    display: grid; grid-template-columns: 1fr auto;
+    gap: var(--s-3); row-gap: var(--s-3);
+  }
+  .match-pill__team {
+    font-family: var(--display); font-size: 28px;
+    letter-spacing: 0.02em; line-height: 1;
+  }
+  .match-pill__score {
+    font-family: var(--display); font-size: 36px;
+    letter-spacing: -0.02em; line-height: 1;
+    text-align: right;
+    font-feature-settings: 'tnum';
+  }
+  .match-pill__score--win { color: var(--lime); }
+
+  /* UPCOMING */
+  .upcoming-feed { display: flex; flex-direction: column; gap: var(--s-2); }
+  .up-row {
+    display: grid; grid-template-columns: 80px 60px 1fr;
+    gap: var(--s-4); align-items: center;
+    padding: var(--s-4) var(--s-4);
+    background: var(--surface-1);
+    border-left: 4px solid var(--cyan);
+    cursor: pointer; transition: all 0.12s ease;
+  }
+  .up-row:hover { background: var(--surface-2); border-left-color: var(--lime); }
+  .up-row__date {
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    color: var(--ink-muted); letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .up-row__date strong { display: block; font-family: var(--display); font-size: 28px; color: var(--ink); letter-spacing: 0.02em; line-height: 1; }
+  .up-row__comp {
+    font-family: var(--display); font-size: 13px; letter-spacing: 0.08em;
+    padding: 4px 8px; background: var(--surface-3); color: var(--ink); text-align: center;
+  }
+  .up-row__match {
+    font-family: var(--display); font-size: 22px; letter-spacing: 0.02em;
+    line-height: 1;
+  }
+  .up-row__match em { font-style: italic; color: var(--lime); margin: 0 var(--s-2); }
+
+  /* TWO-COL */
+  .two-col { display: grid; grid-template-columns: 1.4fr 1fr; gap: var(--s-7); margin-bottom: var(--s-8); }
+
+  /* FOLLOWING (oversized stat cards) */
+  .follow-card {
+    position: relative;
+    padding: var(--s-6) var(--s-5);
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    margin-bottom: var(--s-3);
+    overflow: hidden;
+  }
+  .follow-card__bg-rank {
+    position: absolute; top: -20px; right: -8px;
+    font-family: var(--display);
+    font-size: 220px; line-height: 1;
+    color: rgba(200, 255, 0, 0.07);
+    pointer-events: none;
+    letter-spacing: -0.04em;
+  }
+  .follow-card__top {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: var(--s-4); position: relative;
+  }
+  .follow-card__name {
+    font-family: var(--display); font-size: 48px;
+    letter-spacing: 0.02em; line-height: 0.95;
+  }
+  .follow-card__pos {
+    font-family: var(--display); font-size: 14px;
+    color: var(--lime); letter-spacing: 0.1em;
+  }
+  .follow-card__pos strong { font-size: 32px; line-height: 1; margin-right: 4px; }
+  .follow-card__stats {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--s-4); position: relative;
+    padding-top: var(--s-4); border-top: 1px solid var(--border);
+  }
+  .follow-card__stat-l { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--ink-dim); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px; }
+  .follow-card__stat-v { font-family: var(--display); font-size: 28px; letter-spacing: 0.01em; line-height: 1; }
+  .follow-card__stat-v--ok { color: var(--lime); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero__greeting { font-size: 56px; }
+    .hero__top { flex-direction: column; }
+    .hero__date { text-align: left; }
+    .feature__teams { grid-template-columns: 1fr; gap: var(--s-4); }
+    .feature__team--away { align-items: flex-start; text-align: left; }
+    .feature__team-name { font-size: 36px; }
+    .feature__score { font-size: 96px; justify-content: center; }
+    .matches { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .nav__links { display: none; }
+    .section__title { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a href="#" class="nav__logo"><span>PITCH</span><span>.</span></a>
+    <div class="nav__links">
+      <a href="#" class="nav__link nav__link--active">Home</a>
+      <a href="#" class="nav__link">Live</a>
+      <a href="#" class="nav__link">Comps</a>
+      <a href="#" class="nav__link">Teams</a>
+      <a href="#" class="nav__link">Profile</a>
+    </div>
+    <div class="nav__user">
+      <span class="nav__avatar">E</span>
+      <span>Edu</span>
+    </div>
+  </div>
+</nav>
+
+<main class="main">
+
+  <header class="hero">
+    <div class="hero__top">
+      <h1 class="hero__greeting">Edu<em>.</em></h1>
+      <div class="hero__date">
+        <strong>26 / 04</strong>
+        Saturday · Matchday
+      </div>
+    </div>
+    <div class="hero__live-bar">
+      <span class="hero__live-pill"><span class="dot"></span>4 LIVE</span>
+      <span>·</span>
+      <span>UCL · PL · LaLiga</span>
+      <span>·</span>
+      <span>Real Madrid · Arsenal · Barcelona</span>
+    </div>
+  </header>
+
+  <div class="diag"></div>
+
+  <section class="section">
+    <div class="section__head">
+      <h2 class="section__title">FEATURED <em>/ FROM YOUR FAVORITES</em></h2>
+      <span class="section__count">/UCL · MD12</span>
+    </div>
+
+    <article class="feature">
+      <div class="feature__top">
+        <span class="feature__comp">CHAMPIONS LEAGUE</span>
+        <span class="feature__minute">LIVE 67'</span>
+      </div>
+      <div class="feature__teams">
+        <div class="feature__team">
+          <span class="feature__team-short">RMA</span>
+          <span class="feature__team-name">REAL<br>MADRID</span>
+        </div>
+        <div class="feature__score">
+          <span>1</span>
+          <span class="feature__score-divider">/</span>
+          <span>1</span>
+        </div>
+        <div class="feature__team feature__team--away">
+          <span class="feature__team-short">MCI</span>
+          <span class="feature__team-name">MAN<br>CITY</span>
+        </div>
+      </div>
+      <div class="feature__bottom">
+        <span>SANTIAGO BERNABÉU</span>
+        <span>K.MBAPPÉ 23' · E.HAALAND 41'</span>
+      </div>
+    </article>
+  </section>
+
+  <section class="section">
+    <div class="section__head">
+      <h2 class="section__title">LIVE <em>/ NOW</em></h2>
+      <a href="#" class="section__more">ALL MATCHES /</a>
+    </div>
+
+    <div class="matches">
+      <article class="match-pill match-pill--pl">
+        <div class="match-pill__top">
+          <span class="match-pill__comp match-pill__comp--pl">PREMIER LEAGUE</span>
+          <span class="match-pill__status">LIVE 54'</span>
+        </div>
+        <div class="match-pill__teams">
+          <span class="match-pill__team">ARSENAL</span>
+          <span class="match-pill__score match-pill__score--win">2</span>
+          <span class="match-pill__team">LIVERPOOL</span>
+          <span class="match-pill__score">0</span>
+        </div>
+      </article>
+      <article class="match-pill match-pill--pl">
+        <div class="match-pill__top">
+          <span class="match-pill__comp match-pill__comp--pl">PREMIER LEAGUE</span>
+          <span class="match-pill__status match-pill__status--ht">HALF TIME</span>
+        </div>
+        <div class="match-pill__teams">
+          <span class="match-pill__team">CHELSEA</span>
+          <span class="match-pill__score">0</span>
+          <span class="match-pill__team">TOTTENHAM</span>
+          <span class="match-pill__score">0</span>
+        </div>
+      </article>
+      <article class="match-pill match-pill--liga">
+        <div class="match-pill__top">
+          <span class="match-pill__comp match-pill__comp--liga">LA LIGA</span>
+          <span class="match-pill__status">LIVE 72'</span>
+        </div>
+        <div class="match-pill__teams">
+          <span class="match-pill__team">BARCELONA</span>
+          <span class="match-pill__score match-pill__score--win">3</span>
+          <span class="match-pill__team">ATLÉTICO</span>
+          <span class="match-pill__score">2</span>
+        </div>
+      </article>
+      <article class="match-pill match-pill--ucl">
+        <div class="match-pill__top">
+          <span class="match-pill__comp match-pill__comp--ucl">CHAMPIONS LEAGUE</span>
+          <span class="match-pill__status">LIVE 31'</span>
+        </div>
+        <div class="match-pill__teams">
+          <span class="match-pill__team">BRAZIL</span>
+          <span class="match-pill__score">0</span>
+          <span class="match-pill__team">ARGENTINA</span>
+          <span class="match-pill__score match-pill__score--win">1</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <div class="two-col">
+    <section class="section">
+      <div class="section__head">
+        <h2 class="section__title">UPCOMING</h2>
+      </div>
+      <div class="upcoming-feed">
+        <a href="#" class="up-row">
+          <span class="up-row__date">SAT<strong>26</strong>20:00</span>
+          <span class="up-row__comp">LIGA</span>
+          <span class="up-row__match">ATM <em>/</em> RMA</span>
+        </a>
+        <a href="#" class="up-row">
+          <span class="up-row__date">SUN<strong>27</strong>14:00</span>
+          <span class="up-row__comp">PL</span>
+          <span class="up-row__match">MUN <em>/</em> NEW</span>
+        </a>
+        <a href="#" class="up-row">
+          <span class="up-row__date">TUE<strong>29</strong>19:00</span>
+          <span class="up-row__comp">UCL</span>
+          <span class="up-row__match">PSG <em>/</em> MCI</span>
+        </a>
+        <a href="#" class="up-row">
+          <span class="up-row__date">SAT<strong>03</strong>14:00</span>
+          <span class="up-row__comp">PL</span>
+          <span class="up-row__match">AVL <em>/</em> BRI</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section__head">
+        <h2 class="section__title">YOURS</h2>
+      </div>
+      <article class="follow-card">
+        <span class="follow-card__bg-rank">1</span>
+        <div class="follow-card__top">
+          <h3 class="follow-card__name">ARSENAL</h3>
+          <span class="follow-card__pos"><strong>1</strong>ST · PL</span>
+        </div>
+        <div class="follow-card__stats">
+          <div>
+            <div class="follow-card__stat-l">PTS</div>
+            <div class="follow-card__stat-v follow-card__stat-v--ok">78</div>
+          </div>
+          <div>
+            <div class="follow-card__stat-l">PLAYED</div>
+            <div class="follow-card__stat-v">33</div>
+          </div>
+          <div>
+            <div class="follow-card__stat-l">GD</div>
+            <div class="follow-card__stat-v">+47</div>
+          </div>
+        </div>
+      </article>
+      <article class="follow-card">
+        <span class="follow-card__bg-rank">1</span>
+        <div class="follow-card__top">
+          <h3 class="follow-card__name">REAL MADRID</h3>
+          <span class="follow-card__pos"><strong>1</strong>ST · LIGA</span>
+        </div>
+        <div class="follow-card__stats">
+          <div>
+            <div class="follow-card__stat-l">PTS</div>
+            <div class="follow-card__stat-v follow-card__stat-v--ok">80</div>
+          </div>
+          <div>
+            <div class="follow-card__stat-l">PLAYED</div>
+            <div class="follow-card__stat-v">32</div>
+          </div>
+          <div>
+            <div class="follow-card__stat-l">GD</div>
+            <div class="follow-card__stat-v">+56</div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </div>
+
+</main>
+
+</body>
+</html>

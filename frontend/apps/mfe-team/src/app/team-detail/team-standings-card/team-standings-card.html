@@ -1,0 +1,31 @@
+<article
+  class="team-standings-card"
+  [class.team-standings-card--pl]="entry.competition.code === 'PL'"
+  [class.team-standings-card--ucl]="entry.competition.code === 'UCL'"
+  [class.team-standings-card--liga]="entry.competition.code === 'LIGA'"
+  [class.team-standings-card--int]="entry.competition.code === 'INT'"
+>
+  <span class="team-standings-card__bg-rank">{{ entry.row.position }}</span>
+  <header class="team-standings-card__top">
+    <span class="team-standings-card__code">{{ entry.competition.code }}</span>
+    <span class="team-standings-card__comp">{{ entry.competition.name }}</span>
+  </header>
+  <div class="team-standings-card__rank">
+    <span class="team-standings-card__pos">{{ entry.row.position }}</span>
+    <span class="team-standings-card__suffix">{{ entry.row.position === 1 ? 'st' : entry.row.position === 2 ? 'nd' : entry.row.position === 3 ? 'rd' : 'th' }}</span>
+  </div>
+  <div class="team-standings-card__stats">
+    <div class="team-standings-card__stat">
+      <div class="team-standings-card__stat-label">Pts</div>
+      <div class="team-standings-card__stat-value team-standings-card__stat-value--ok">{{ entry.row.points }}</div>
+    </div>
+    <div class="team-standings-card__stat">
+      <div class="team-standings-card__stat-label">Played</div>
+      <div class="team-standings-card__stat-value">{{ entry.row.played }}</div>
+    </div>
+    <div class="team-standings-card__stat">
+      <div class="team-standings-card__stat-label">GD</div>
+      <div class="team-standings-card__stat-value">{{ entry.row.goalDifference > 0 ? '+' : '' }}{{ entry.row.goalDifference }}</div>
+    </div>
+  </div>
+</article>

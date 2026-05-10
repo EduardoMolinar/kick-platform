@@ -1,7 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { AUTH_SERVICE, type AuthSession } from '@platform/auth';
-import { DsList, DsListItem } from '@platform/design-system';
 import { PROFILE_SERVICE, type ProfileService } from '@platform/profile';
 import type { MatchSummary } from '@platform/shared-types';
 import { SPORTS_DATA_SERVICE } from '@platform/sports-data';
@@ -30,7 +29,7 @@ interface LiveNowVm {
 @Component({
   selector: 'mfe-live-live-now',
   standalone: true,
-  imports: [AsyncPipe, DsList, DsListItem, MatchCard],
+  imports: [AsyncPipe, MatchCard],
   templateUrl: './live-now.html',
   styleUrl: './live-now.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -76,6 +75,9 @@ export class LiveNow {
     const action = isFollowing
       ? this.profile.unfollowTeam(user.userId, team.id)
       : this.profile.followTeam(user.userId, { id: team.id, name: team.name });
-    firstValueFrom(action);
+    const verb = isFollowing ? 'unfollow' : 'follow';
+    void firstValueFrom(action).catch((err) => {
+      console.error(`Failed to ${verb} team ${team.id}`, err);
+    });
   }
 }

@@ -1,8 +1,23 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { AUTH_SERVICE, type AuthService } from '@platform/auth';
+import {
+  THEME_SERVICE,
+  type ThemeMode,
+  type ThemeService,
+} from '@platform/design-system';
 import { PROFILE_SERVICE, type ProfileService } from '@platform/profile';
 import { BehaviorSubject, of } from 'rxjs';
 import { ProfilePage } from './profile-page';
+
+function makeThemeStub(): ThemeService {
+  const mode = new BehaviorSubject<ThemeMode>('dark');
+  return {
+    mode$: mode.asObservable(),
+    resolved$: of('dark' as const),
+    setMode: (m) => mode.next(m),
+  };
+}
 
 const stubUser = { userId: 'u-demo-001', displayName: 'Demo User', email: 'demo@platform.local' };
 
@@ -40,6 +55,8 @@ describe('ProfilePage', () => {
     await TestBed.configureTestingModule({
       imports: [ProfilePage],
       providers: [
+        provideRouter([]),
+        { provide: THEME_SERVICE, useValue: makeThemeStub() },
         { provide: AUTH_SERVICE, useValue: makeAuthStub() },
         { provide: PROFILE_SERVICE, useValue: makeProfileStub() },
       ],
@@ -58,6 +75,8 @@ describe('ProfilePage', () => {
     await TestBed.configureTestingModule({
       imports: [ProfilePage],
       providers: [
+        provideRouter([]),
+        { provide: THEME_SERVICE, useValue: makeThemeStub() },
         { provide: AUTH_SERVICE, useValue: makeAuthStub() },
         {
           provide: PROFILE_SERVICE,
@@ -84,6 +103,8 @@ describe('ProfilePage', () => {
     await TestBed.configureTestingModule({
       imports: [ProfilePage],
       providers: [
+        provideRouter([]),
+        { provide: THEME_SERVICE, useValue: makeThemeStub() },
         { provide: AUTH_SERVICE, useValue: makeAuthStub() },
         { provide: PROFILE_SERVICE, useValue: profileStub },
       ],
@@ -108,6 +129,8 @@ describe('ProfilePage', () => {
     await TestBed.configureTestingModule({
       imports: [ProfilePage],
       providers: [
+        provideRouter([]),
+        { provide: THEME_SERVICE, useValue: makeThemeStub() },
         { provide: AUTH_SERVICE, useValue: makeAuthStub() },
         {
           provide: PROFILE_SERVICE,
@@ -132,6 +155,8 @@ describe('ProfilePage', () => {
     await TestBed.configureTestingModule({
       imports: [ProfilePage],
       providers: [
+        provideRouter([]),
+        { provide: THEME_SERVICE, useValue: makeThemeStub() },
         { provide: AUTH_SERVICE, useValue: makeAuthStub() },
         { provide: PROFILE_SERVICE, useValue: profileStub },
       ],

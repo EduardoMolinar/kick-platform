@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concourse — Design Direction B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;0,9..144,900;1,9..144,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Surface */
+    --paper: #F5F1EA;
+    --paper-2: #ECE6DB;
+    --paper-3: #E2DBCE;
+    --card: #FFFFFF;
+
+    /* Ink */
+    --ink: #0B0B0B;
+    --ink-2: #2A2A2A;
+    --ink-muted: #5A554C;
+    --ink-dim: #8A8478;
+    --rule: #0B0B0B;
+    --rule-soft: rgba(11, 11, 11, 0.12);
+
+    /* Accent */
+    --accent: #FF4500;
+    --live: #D90429;
+    --gold: #B8860B;
+
+    /* Type */
+    --serif: 'Fraunces', Georgia, serif;
+    --body: 'Inter', system-ui, sans-serif;
+
+    /* Space */
+    --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px;
+    --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--paper); color: var(--ink); font-family: var(--body); -webkit-font-smoothing: antialiased; }
+  body { min-height: 100vh; font-size: 16px; line-height: 1.55; }
+  a { color: inherit; text-decoration: none; }
+
+  /* TOP NAV */
+  .nav {
+    border-bottom: 1.5px solid var(--rule);
+    background: var(--paper);
+    position: sticky; top: 0; z-index: 50;
+  }
+  .nav__inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; align-items: center; gap: var(--s-6);
+    padding: var(--s-4) var(--s-5);
+  }
+  .nav__logo {
+    font-family: var(--serif); font-weight: 900; font-size: 26px;
+    font-variation-settings: 'opsz' 144, 'SOFT' 0;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .nav__logo em { font-style: italic; color: var(--accent); }
+  .nav__links { display: flex; gap: var(--s-5); margin-left: var(--s-7); flex: 1; }
+  .nav__link {
+    font-family: var(--serif); font-size: 15px; font-weight: 500;
+    color: var(--ink-muted);
+    padding: var(--s-2) 0;
+    border-bottom: 1.5px solid transparent;
+    transition: border-color 0.12s ease, color 0.12s ease;
+  }
+  .nav__link:hover { color: var(--ink); }
+  .nav__link--active { color: var(--ink); border-bottom-color: var(--accent); }
+  .nav__user {
+    font-family: var(--serif); font-style: italic; font-size: 14px;
+    color: var(--ink-muted);
+  }
+  .nav__user strong { color: var(--ink); font-style: normal; font-weight: 600; }
+
+  /* MAIN */
+  .main { max-width: 1200px; margin: 0 auto; padding: var(--s-7) var(--s-5) var(--s-9); }
+
+  /* MASTHEAD */
+  .masthead {
+    border-bottom: 1.5px solid var(--rule);
+    padding-bottom: var(--s-6);
+    margin-bottom: var(--s-7);
+  }
+  .masthead__date {
+    font-family: var(--serif); font-style: italic; font-size: 14px;
+    color: var(--ink-muted);
+    text-transform: uppercase; letter-spacing: 0.18em;
+    margin-bottom: var(--s-3);
+  }
+  .masthead__title {
+    font-family: var(--serif); font-weight: 900; font-size: 88px;
+    font-variation-settings: 'opsz' 144, 'SOFT' 0;
+    letter-spacing: -0.045em; line-height: 0.95;
+    color: var(--ink);
+  }
+  .masthead__title em { font-style: italic; font-weight: 400; color: var(--ink-muted); }
+  .masthead__sub {
+    margin-top: var(--s-4);
+    font-family: var(--serif); font-style: italic; font-size: 18px;
+    color: var(--ink-2); max-width: 60ch; line-height: 1.45;
+  }
+
+  /* SECTION HEADER */
+  .section { margin-bottom: var(--s-8); }
+  .section__head {
+    display: flex; align-items: end; justify-content: space-between;
+    border-bottom: 1.5px solid var(--rule);
+    padding-bottom: var(--s-3);
+    margin-bottom: var(--s-5);
+  }
+  .section__kicker {
+    font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 13px;
+    color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.16em;
+    margin-bottom: var(--s-1);
+  }
+  .section__title {
+    font-family: var(--serif); font-weight: 800; font-size: 36px;
+    font-variation-settings: 'opsz' 144;
+    letter-spacing: -0.025em; line-height: 1;
+  }
+  .section__more {
+    font-family: var(--serif); font-style: italic; font-size: 14px;
+    color: var(--ink-muted);
+  }
+  .section__more:hover { color: var(--accent); }
+
+  /* HERO MATCH (LEAD STORY) */
+  .lead {
+    display: grid; grid-template-columns: 1.4fr 1fr;
+    gap: var(--s-7);
+    margin-bottom: var(--s-8);
+    padding-bottom: var(--s-7);
+    border-bottom: 1.5px solid var(--rule);
+  }
+  .lead__main { padding-right: var(--s-6); border-right: 1.5px solid var(--rule); }
+  .lead__kicker {
+    display: flex; align-items: center; gap: var(--s-3);
+    font-family: var(--serif); font-size: 13px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--ink-muted);
+    margin-bottom: var(--s-4);
+  }
+  .lead__kicker .live-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--live);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .lead__kicker em { font-style: normal; color: var(--live); font-weight: 700; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.55; transform: scale(0.85); }
+  }
+
+  .lead__match {
+    display: flex; flex-direction: column; gap: var(--s-3);
+  }
+  .lead__row {
+    display: grid; grid-template-columns: 1fr auto; align-items: center;
+    padding: var(--s-3) 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .lead__row:last-child { border-bottom: none; }
+  .lead__team {
+    font-family: var(--serif); font-weight: 700; font-size: 56px;
+    font-variation-settings: 'opsz' 144;
+    letter-spacing: -0.035em; line-height: 1;
+  }
+  .lead__score {
+    font-family: var(--serif); font-weight: 800; font-size: 80px;
+    font-variation-settings: 'opsz' 144;
+    letter-spacing: -0.04em; line-height: 0.85;
+    font-feature-settings: 'tnum';
+  }
+  .lead__meta {
+    margin-top: var(--s-4);
+    font-family: var(--serif); font-style: italic; font-size: 15px;
+    color: var(--ink-muted);
+  }
+
+  .lead__side h3 {
+    font-family: var(--serif); font-weight: 600; font-size: 13px;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    color: var(--ink-muted);
+    margin-bottom: var(--s-4);
+    padding-bottom: var(--s-3);
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .lead__quote {
+    font-family: var(--serif); font-style: italic; font-weight: 500;
+    font-size: 26px; line-height: 1.25;
+    font-variation-settings: 'opsz' 144;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin-bottom: var(--s-5);
+  }
+  .lead__quote::before { content: '\201C'; color: var(--accent); }
+  .lead__quote::after { content: '\201D'; color: var(--accent); }
+  .lead__attrib { font-size: 13px; color: var(--ink-muted); font-style: italic; }
+  .lead__stats {
+    margin-top: var(--s-6); padding-top: var(--s-5);
+    border-top: 1px solid var(--rule-soft);
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: var(--s-5);
+  }
+  .lead__stat-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-muted); margin-bottom: var(--s-1); }
+  .lead__stat-value {
+    font-family: var(--serif); font-weight: 800; font-size: 32px;
+    letter-spacing: -0.02em; line-height: 1;
+    font-feature-settings: 'tnum';
+  }
+
+  /* LIVE LIST */
+  .live-list { display: flex; flex-direction: column; }
+  .live-row {
+    display: grid; grid-template-columns: 110px 1fr auto 70px;
+    gap: var(--s-5); align-items: center;
+    padding: var(--s-5) 0;
+    border-bottom: 1px solid var(--rule-soft);
+    cursor: pointer; transition: background 0.12s ease;
+  }
+  .live-row:hover { background: var(--paper-2); margin: 0 calc(-1 * var(--s-3)); padding: var(--s-5) var(--s-3); }
+  .live-row__comp {
+    font-family: var(--serif); font-style: italic; font-size: 14px;
+    color: var(--ink-muted);
+    text-transform: uppercase; letter-spacing: 0.12em;
+  }
+  .live-row__teams { display: flex; flex-direction: column; gap: 2px; }
+  .live-row__team {
+    font-family: var(--serif); font-weight: 600; font-size: 22px;
+    font-variation-settings: 'opsz' 144;
+    letter-spacing: -0.02em;
+  }
+  .live-row__scores {
+    display: flex; flex-direction: column; gap: 2px; align-items: end;
+    font-family: var(--serif); font-weight: 800; font-size: 26px;
+    letter-spacing: -0.025em; line-height: 1.05;
+    font-feature-settings: 'tnum';
+  }
+  .live-row__status {
+    text-align: right;
+    font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 14px;
+    color: var(--ink-muted);
+  }
+  .live-row__status--live { color: var(--live); font-weight: 700; font-style: normal; letter-spacing: 0.04em; }
+
+  /* THREE-COL GRID */
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--s-7); }
+
+  /* UPCOMING (Tabular calendar) */
+  .upcoming-row {
+    display: grid; grid-template-columns: auto 1fr auto;
+    gap: var(--s-4); align-items: baseline;
+    padding: var(--s-4) 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .upcoming-date {
+    font-family: var(--serif); font-weight: 700; font-size: 18px;
+    color: var(--ink); width: 60px;
+    font-variation-settings: 'opsz' 144;
+  }
+  .upcoming-date em { display: block; font-style: italic; font-size: 11px; color: var(--ink-muted); font-weight: 400; text-transform: uppercase; letter-spacing: 0.15em; margin-top: 2px; }
+  .upcoming-match {
+    font-family: var(--serif); font-weight: 500; font-size: 17px;
+    line-height: 1.3;
+  }
+  .upcoming-match em { font-style: italic; color: var(--ink-muted); margin: 0 var(--s-2); font-weight: 400; }
+  .upcoming-comp {
+    font-family: var(--serif); font-style: italic; font-size: 12px;
+    color: var(--accent); text-transform: uppercase; letter-spacing: 0.12em;
+  }
+
+  /* STANDINGS */
+  .standings-table { width: 100%; border-collapse: collapse; }
+  .standings-table th {
+    font-family: var(--serif); font-style: italic; font-size: 12px; font-weight: 500;
+    color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.1em;
+    text-align: right; padding: var(--s-3) var(--s-2);
+    border-bottom: 1.5px solid var(--rule);
+  }
+  .standings-table th:first-child, .standings-table th:nth-child(2) { text-align: left; }
+  .standings-table td {
+    padding: var(--s-3) var(--s-2);
+    border-bottom: 1px solid var(--rule-soft);
+    font-family: var(--serif);
+    font-feature-settings: 'tnum';
+    text-align: right;
+  }
+  .standings-table td:first-child {
+    text-align: center;
+    font-weight: 800; font-size: 18px;
+    color: var(--ink);
+  }
+  .standings-table td:nth-child(2) { text-align: left; font-weight: 600; font-size: 16px; letter-spacing: -0.01em; }
+  .standings-table .row--leader td:first-child { color: var(--accent); }
+  .standings-table .row--mine { background: rgba(255, 69, 0, 0.06); }
+  .standings-table .pts { font-weight: 800; font-size: 17px; }
+
+  /* TEAMS PERSONAL */
+  .your-teams {
+    margin-top: var(--s-4);
+    display: grid; gap: var(--s-3);
+  }
+  .your-team-row {
+    display: grid; grid-template-columns: 32px 1fr auto;
+    gap: var(--s-4); align-items: baseline;
+    padding: var(--s-4) 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .your-team-pos {
+    font-family: var(--serif); font-weight: 800; font-size: 28px;
+    color: var(--accent); letter-spacing: -0.04em; line-height: 1;
+  }
+  .your-team-name {
+    font-family: var(--serif); font-weight: 600; font-size: 22px;
+    letter-spacing: -0.02em;
+  }
+  .your-team-comp { display: block; font-family: var(--serif); font-style: italic; font-size: 13px; color: var(--ink-muted); margin-top: 2px; }
+  .your-team-pts {
+    font-family: var(--serif); font-weight: 800; font-size: 18px;
+    font-feature-settings: 'tnum';
+    text-align: right;
+  }
+  .your-team-pts em { display: block; font-size: 11px; font-weight: 400; font-style: italic; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .masthead__title { font-size: 56px; }
+    .lead { grid-template-columns: 1fr; gap: var(--s-5); }
+    .lead__main { padding-right: 0; border-right: none; padding-bottom: var(--s-5); border-bottom: 1px solid var(--rule-soft); }
+    .lead__team { font-size: 36px; }
+    .lead__score { font-size: 56px; }
+    .three-col { grid-template-columns: 1fr; gap: var(--s-7); }
+    .nav__links { display: none; }
+    .live-row { grid-template-columns: 1fr auto; gap: var(--s-3); }
+    .live-row__comp { display: none; }
+    .live-row__status { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a href="#" class="nav__logo">Pitch<em>.</em></a>
+    <div class="nav__links">
+      <a href="#" class="nav__link nav__link--active">Home</a>
+      <a href="#" class="nav__link">Live</a>
+      <a href="#" class="nav__link">Competitions</a>
+      <a href="#" class="nav__link">Teams</a>
+      <a href="#" class="nav__link">Profile</a>
+    </div>
+    <span class="nav__user">Signed in as <strong>Edu</strong></span>
+  </div>
+</nav>
+
+<main class="main">
+
+  <header class="masthead">
+    <p class="masthead__date">Saturday · 26 April · 2026</p>
+    <h1 class="masthead__title">Welcome back<em>,</em> Edu</h1>
+    <p class="masthead__sub">Four matches live across your competitions. Real Madrid play City in Madrid; Arsenal lead Liverpool at the Emirates.</p>
+  </header>
+
+  <section class="lead">
+    <div class="lead__main">
+      <p class="lead__kicker">
+        <span class="live-dot"></span>
+        <em>Live · 67th minute</em>
+        <span>·</span>
+        <span>Champions League</span>
+        <span>·</span>
+        <span>Matchday 12</span>
+      </p>
+      <div class="lead__match">
+        <div class="lead__row">
+          <span class="lead__team">Real Madrid</span>
+          <span class="lead__score">1</span>
+        </div>
+        <div class="lead__row">
+          <span class="lead__team">Manchester City</span>
+          <span class="lead__score">1</span>
+        </div>
+      </div>
+      <p class="lead__meta">Santiago Bernabéu · Madrid · Goals from K. Mbappé (23') and E. Haaland (41').</p>
+    </div>
+
+    <aside class="lead__side">
+      <h3>The headline</h3>
+      <p class="lead__quote">Two of Europe's heavyweights, level at the break, with the tie wide open and the second leg in Manchester to come.</p>
+      <p class="lead__attrib">— Match preview</p>
+
+      <div class="lead__stats">
+        <div>
+          <div class="lead__stat-label">Possession</div>
+          <div class="lead__stat-value">54%</div>
+        </div>
+        <div>
+          <div class="lead__stat-label">Shots</div>
+          <div class="lead__stat-value">11—9</div>
+        </div>
+        <div>
+          <div class="lead__stat-label">xG</div>
+          <div class="lead__stat-value">1.84</div>
+        </div>
+        <div>
+          <div class="lead__stat-label">Corners</div>
+          <div class="lead__stat-value">6—3</div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="section">
+    <header class="section__head">
+      <div>
+        <p class="section__kicker">Across your competitions</p>
+        <h2 class="section__title">Live now</h2>
+      </div>
+      <a href="#" class="section__more">View all matches →</a>
+    </header>
+
+    <div class="live-list">
+      <a href="#" class="live-row">
+        <span class="live-row__comp">Premier League</span>
+        <div class="live-row__teams">
+          <span class="live-row__team">Arsenal</span>
+          <span class="live-row__team">Liverpool</span>
+        </div>
+        <div class="live-row__scores">
+          <span>2</span>
+          <span>0</span>
+        </div>
+        <span class="live-row__status live-row__status--live">54'</span>
+      </a>
+      <a href="#" class="live-row">
+        <span class="live-row__comp">Premier League</span>
+        <div class="live-row__teams">
+          <span class="live-row__team">Chelsea</span>
+          <span class="live-row__team">Tottenham</span>
+        </div>
+        <div class="live-row__scores">
+          <span>0</span>
+          <span>0</span>
+        </div>
+        <span class="live-row__status">HT</span>
+      </a>
+      <a href="#" class="live-row">
+        <span class="live-row__comp">La Liga</span>
+        <div class="live-row__teams">
+          <span class="live-row__team">FC Barcelona</span>
+          <span class="live-row__team">Atlético Madrid</span>
+        </div>
+        <div class="live-row__scores">
+          <span>3</span>
+          <span>2</span>
+        </div>
+        <span class="live-row__status live-row__status--live">72'</span>
+      </a>
+    </div>
+  </section>
+
+  <div class="three-col">
+    <section class="section">
+      <header class="section__head">
+        <div>
+          <p class="section__kicker">This week</p>
+          <h2 class="section__title">Upcoming</h2>
+        </div>
+      </header>
+      <div class="upcoming-row">
+        <span class="upcoming-date">26<em>Sat</em></span>
+        <span class="upcoming-match">Atlético <em>vs</em> Real Madrid</span>
+        <span class="upcoming-comp">LaLiga</span>
+      </div>
+      <div class="upcoming-row">
+        <span class="upcoming-date">27<em>Sun</em></span>
+        <span class="upcoming-match">Man United <em>vs</em> Newcastle</span>
+        <span class="upcoming-comp">Premier</span>
+      </div>
+      <div class="upcoming-row">
+        <span class="upcoming-date">29<em>Tue</em></span>
+        <span class="upcoming-match">Paris SG <em>vs</em> Man City</span>
+        <span class="upcoming-comp">UCL</span>
+      </div>
+      <div class="upcoming-row">
+        <span class="upcoming-date">03<em>Sat</em></span>
+        <span class="upcoming-match">Aston Villa <em>vs</em> Brighton</span>
+        <span class="upcoming-comp">Premier</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <header class="section__head">
+        <div>
+          <p class="section__kicker">Personal</p>
+          <h2 class="section__title">Your teams</h2>
+        </div>
+      </header>
+      <div class="your-teams">
+        <div class="your-team-row">
+          <span class="your-team-pos">1</span>
+          <div>
+            <span class="your-team-name">Arsenal</span>
+            <span class="your-team-comp">Premier League · 33 played</span>
+          </div>
+          <span class="your-team-pts">78<em>points</em></span>
+        </div>
+        <div class="your-team-row">
+          <span class="your-team-pos">1</span>
+          <div>
+            <span class="your-team-name">Real Madrid</span>
+            <span class="your-team-comp">La Liga · 32 played</span>
+          </div>
+          <span class="your-team-pts">80<em>points</em></span>
+        </div>
+        <div class="your-team-row">
+          <span class="your-team-pos">1</span>
+          <div>
+            <span class="your-team-name">Real Madrid</span>
+            <span class="your-team-comp">Champions League · 10 played</span>
+          </div>
+          <span class="your-team-pts">25<em>points</em></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <header class="section__head">
+        <div>
+          <p class="section__kicker">Premier League</p>
+          <h2 class="section__title">Standings</h2>
+        </div>
+      </header>
+      <table class="standings-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Club</th>
+            <th>P</th>
+            <th>GD</th>
+            <th>Pts</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row--leader row--mine">
+            <td>1</td>
+            <td>Arsenal</td>
+            <td>33</td>
+            <td>+47</td>
+            <td class="pts">78</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Liverpool</td>
+            <td>33</td>
+            <td>+40</td>
+            <td class="pts">73</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Man City</td>
+            <td>33</td>
+            <td>+36</td>
+            <td class="pts">70</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Tottenham</td>
+            <td>33</td>
+            <td>+20</td>
+            <td class="pts">62</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Chelsea</td>
+            <td>33</td>
+            <td>+13</td>
+            <td class="pts">57</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+</main>
+
+</body>
+</html>

@@ -2,7 +2,6 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AUTH_SERVICE, type AuthSession } from '@platform/auth';
-import { DsCard, DsList, DsListItem } from '@platform/design-system';
 import { PROFILE_SERVICE, type ProfileService } from '@platform/profile';
 import type { Competition } from '@platform/shared-types';
 import { combineLatest, filter, firstValueFrom, map, switchMap, type Observable } from 'rxjs';
@@ -16,7 +15,7 @@ interface CompetitionListVm {
 @Component({
   selector: 'mfe-competition-competition-list',
   standalone: true,
-  imports: [AsyncPipe, RouterLink, DsCard, DsList, DsListItem],
+  imports: [AsyncPipe, RouterLink],
   templateUrl: './competition-list.html',
   styleUrl: './competition-list.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -48,6 +47,9 @@ export class CompetitionList {
     const action = isFollowing
       ? this.profile.unfollowCompetition(user.userId, competition.id)
       : this.profile.followCompetition(user.userId, competition);
-    firstValueFrom(action);
+    const verb = isFollowing ? 'unfollow' : 'follow';
+    void firstValueFrom(action).catch((err) => {
+      console.error(`Failed to ${verb} competition ${competition.id}`, err);
+    });
   }
 }

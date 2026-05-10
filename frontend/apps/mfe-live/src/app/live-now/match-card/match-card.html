@@ -1,13 +1,17 @@
-<ds-card variant="flat" [attr.aria-label]="'Match: ' + match.home.team.name + ' vs ' + match.away.team.name">
-  <div ds-card-header class="match-card__header">
+<article [class]="cardClasses" [attr.aria-label]="'Match: ' + match.home.team.name + ' vs ' + match.away.team.name">
+  <header class="match-card__header">
     <span class="match-card__competition">{{ match.competition.code }}</span>
-    <ds-badge [variant]="badgeVariant">{{ statusLabel }}</ds-badge>
-  </div>
+    <span class="match-card__status">
+      @if (isLive) {
+        <span class="match-card__pulse"></span>
+      }
+      {{ statusLabel }}
+    </span>
+  </header>
 
   <div class="match-card__teams">
     <div class="match-card__row">
       <span class="match-card__team-name">{{ match.home.team.name }}</span>
-      <span class="match-card__score">{{ match.home.score }}</span>
       <button
         type="button"
         class="match-card__follow"
@@ -15,10 +19,13 @@
         [attr.aria-pressed]="homeFollowing"
         (click)="homeFollowToggle.emit()"
       >{{ homeFollowing ? 'Following' : 'Follow' }}</button>
+      <span
+        class="match-card__score"
+        [class.match-card__score--leading]="match.home.score > match.away.score"
+      >{{ match.home.score }}</span>
     </div>
     <div class="match-card__row">
       <span class="match-card__team-name">{{ match.away.team.name }}</span>
-      <span class="match-card__score">{{ match.away.score }}</span>
       <button
         type="button"
         class="match-card__follow"
@@ -26,6 +33,10 @@
         [attr.aria-pressed]="awayFollowing"
         (click)="awayFollowToggle.emit()"
       >{{ awayFollowing ? 'Following' : 'Follow' }}</button>
+      <span
+        class="match-card__score"
+        [class.match-card__score--leading]="match.away.score > match.home.score"
+      >{{ match.away.score }}</span>
     </div>
   </div>
-</ds-card>
+</article>

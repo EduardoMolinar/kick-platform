@@ -1,0 +1,39 @@
+.ds-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: 2px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--ds-radius-pill);
+}
+
+.ds-theme-toggle__btn {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--ink-muted);
+  width: 32px;
+  height: 28px;
+  border-radius: var(--ds-radius-pill);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition:
+    color var(--ds-duration-fast) var(--ds-easing-standard),
+    background var(--ds-duration-fast) var(--ds-easing-standard);
+
+  &:hover {
+    color: var(--ink);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--brand-strong);
+    outline-offset: 2px;
+  }
+
+  &--active {
+    background: var(--surface-3);
+    color: var(--brand-strong);
+  }
+}

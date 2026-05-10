@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { DsCard } from '@platform/design-system';
+import { RouterLink } from '@angular/router';
 import type { Team } from '@platform/shared-types';
 
 @Component({
   selector: 'mfe-profile-team-tile',
   standalone: true,
-  imports: [DsCard],
+  imports: [RouterLink],
   templateUrl: './team-tile.html',
   styleUrl: './team-tile.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

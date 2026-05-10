@@ -35,10 +35,29 @@ describe('LiveTile', () => {
     expect(text).toContain("LIVE 67'");
   });
 
-  it('shows HT for a halftime match', () => {
+  it('shows HALF TIME for a halftime match', () => {
     fixture.componentRef.setInput('match', { ...baseMatch, status: 'halftime' });
     fixture.detectChanges();
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(text).toContain('HT');
+    expect(text).toContain('HALF TIME');
+  });
+
+  it('applies the competition-keyed class', () => {
+    const article = fixture.nativeElement.querySelector('article');
+    expect(article.className).toContain('live-tile--pl');
+  });
+
+  it('applies the featured class when [featured]=true', () => {
+    fixture.componentRef.setInput('featured', true);
+    fixture.detectChanges();
+    const article = fixture.nativeElement.querySelector('article');
+    expect(article.className).toContain('live-tile--featured');
+  });
+
+  it('renders the hero layout (team-name elements) when featured', () => {
+    fixture.componentRef.setInput('featured', true);
+    fixture.detectChanges();
+    const heroNames = fixture.nativeElement.querySelectorAll('.live-tile__team-name');
+    expect(heroNames.length).toBe(2);
   });
 });

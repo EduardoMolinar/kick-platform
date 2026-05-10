@@ -35,18 +35,30 @@ describe('MatchCard', () => {
     expect(text).toContain("LIVE 54'");
   });
 
-  it('shows HT for a halftime match', () => {
+  it('shows HALF TIME for a halftime match', () => {
     fixture.componentRef.setInput('match', { ...baseMatch, status: 'halftime' });
     fixture.detectChanges();
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(text).toContain('HT');
+    expect(text).toContain('HALF TIME');
   });
 
-  it('shows FT for a finished match', () => {
+  it('shows FULL TIME for a finished match', () => {
     fixture.componentRef.setInput('match', { ...baseMatch, status: 'finished', minute: undefined });
     fixture.detectChanges();
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
-    expect(text).toContain('FT');
+    expect(text).toContain('FULL TIME');
+  });
+
+  it('applies the competition-keyed class', () => {
+    const article = fixture.nativeElement.querySelector('article');
+    expect(article.className).toContain('match-card--pl');
+  });
+
+  it('applies the featured class when [featured]=true', () => {
+    fixture.componentRef.setInput('featured', true);
+    fixture.detectChanges();
+    const article = fixture.nativeElement.querySelector('article');
+    expect(article.className).toContain('match-card--featured');
   });
 
   it('shows Follow buttons for both teams by default', () => {
