@@ -125,20 +125,19 @@ jobs:
     name: Deploy remote — ${{ matrix.remote }}
     needs: detect-affected
     if: needs.detect-affected.outputs.remotes != '[]' && needs.detect-affected.outputs.remotes != ''
-    # Environment scoping: the AWS_ROLE_ARN, S3_BUCKET, and
-    # CLOUDFRONT_DISTRIBUTION_ID secrets live under the `prod` environment.
-    # Declaring it here makes those env-scoped secrets visible to `secrets: inherit`.
-    environment: prod
 
     strategy:
       matrix:
         remote: ${{ fromJson(needs.detect-affected.outputs.remotes) }}
       fail-fast: false   # one remote failure does not block siblings
 
+    # The reusable workflow's build-and-deploy job declares `environment: prod`
+    # internally, which is what makes the env-scoped secrets available. We
+    # cannot declare `environment:` here because GitHub Actions does not
+    # support it on jobs that call a reusable workflow.
     uses: ./.github/workflows/_deploy-remote.yml
     with:
       remote: ${{ matrix.remote }}
-    secrets: inherit
 
   # ─────────────────────────────────────────────────────────────────────────────
   # Job 3: deploy shell — only after remotes complete (or are skipped)
@@ -162,8 +161,5 @@ jobs:
       needs.detect-affected.outputs.shell == 'true' &&
       !cancelled() &&
       (needs.deploy-remotes.result == 'success' || needs.deploy-remotes.result == 'skipped')
-    # See deploy-remotes for why `environment: prod` is required here.
-    environment: prod
 
     uses: ./.github/workflows/release-shell.yml
-    secrets: inherit

@@ -29,13 +29,6 @@ on:
         required: false
         type: string
         default: ""
-    secrets:
-      AWS_ROLE_ARN:
-        required: true
-      S3_BUCKET:
-        required: true
-      CLOUDFRONT_DISTRIBUTION_ID:
-        required: true
 
 env:
   NODE_VERSION: "24"
@@ -44,6 +37,12 @@ jobs:
   build-and-deploy:
     name: Build and deploy ${{ inputs.remote }}
     runs-on: ubuntu-latest
+
+    # Pulls AWS_ROLE_ARN, S3_BUCKET, and CLOUDFRONT_DISTRIBUTION_ID from the
+    # `prod` GitHub environment's secret store. Declared here (not on the
+    # calling job) because `environment:` is not a valid key on a job that
+    # calls a reusable workflow.
+    environment: prod
 
     permissions:
       id-token: write   # required for OIDC
