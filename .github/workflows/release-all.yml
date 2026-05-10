@@ -37,6 +37,9 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────────────
   deploy-remotes:
     name: Deploy remote — ${{ matrix.remote }}
+    # Required so the env-scoped secrets (AWS_ROLE_ARN, S3_BUCKET,
+    # CLOUDFRONT_DISTRIBUTION_ID) are visible to `secrets: inherit`.
+    environment: prod
 
     strategy:
       matrix:
@@ -60,6 +63,7 @@ jobs:
     name: Deploy shell
     needs: deploy-remotes
     if: "!cancelled() && !failure()"
+    environment: prod
 
     uses: ./.github/workflows/release-shell.yml
     secrets: inherit

@@ -125,6 +125,10 @@ jobs:
     name: Deploy remote — ${{ matrix.remote }}
     needs: detect-affected
     if: needs.detect-affected.outputs.remotes != '[]' && needs.detect-affected.outputs.remotes != ''
+    # Environment scoping: the AWS_ROLE_ARN, S3_BUCKET, and
+    # CLOUDFRONT_DISTRIBUTION_ID secrets live under the `prod` environment.
+    # Declaring it here makes those env-scoped secrets visible to `secrets: inherit`.
+    environment: prod
 
     strategy:
       matrix:
@@ -158,6 +162,8 @@ jobs:
       needs.detect-affected.outputs.shell == 'true' &&
       !cancelled() &&
       (needs.deploy-remotes.result == 'success' || needs.deploy-remotes.result == 'skipped')
+    # See deploy-remotes for why `environment: prod` is required here.
+    environment: prod
 
     uses: ./.github/workflows/release-shell.yml
     secrets: inherit
