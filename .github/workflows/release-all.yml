@@ -1,0 +1,65 @@
+# release-all.yml
+#
+# SAFETY NET — deploys all six apps unconditionally.
+# Triggered manually only (workflow_dispatch).
+#
+# Use this when you need a fast known-good state without crafting a revert PR,
+# or to recover from a partial deploy that left apps out of sync.
+#
+# To deploy from a specific commit:
+#   GitHub UI → Actions → Release — All → Run workflow → enter the commit SHA
+#   or branch name in the "Use workflow from" selector.
+#
+# Concurrency: same group as release-affected.yml so the two workflows cannot
+# race each other. cancel-in-progress: false queues rather than aborts.
+#
+# Deployment order:
+#   1. All five remotes in parallel (fail-fast: false)
+#   2. Shell, only after all remotes succeed
+
+name: Release — All
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: release-affected
+  cancel-in-progress: false
+
+permissions:
+  id-token: write   # OIDC for AWS
+  contents: read    # checkout
+  actions: read
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job 1: deploy all remotes in parallel
+  # ─────────────────────────────────────────────────────────────────────────────
+  deploy-remotes:
+    name: Deploy remote — ${{ matrix.remote }}
+
+    strategy:
+      matrix:
+        remote:
+          - mfe-home
+          - mfe-live
+          - mfe-competition
+          - mfe-team
+          - mfe-profile
+      fail-fast: false   # one remote failure does not block siblings
+
+    uses: ./.github/workflows/_deploy-remote.yml
+    with:
+      remote: ${{ matrix.remote }}
+    secrets: inherit
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Job 2: deploy shell after all remotes complete
+  # ─────────────────────────────────────────────────────────────────────────────
+  deploy-shell:
+    name: Deploy shell
+    needs: deploy-remotes
+    if: "!cancelled() && !failure()"
+
+    uses: ./.github/workflows/release-shell.yml
+    secrets: inherit

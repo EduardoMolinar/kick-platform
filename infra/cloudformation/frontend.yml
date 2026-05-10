@@ -1,0 +1,404 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  kick-platform frontend infrastructure.
+  Single stack containing: S3 origin bucket, CloudFront distribution with OAC,
+  and an IAM OIDC role for GitHub Actions deployments.
+
+  Single-stack decision: the shell + remotes are one cohesive frontend product
+  with tightly coupled CloudFront behaviors. A nested-stack split would add
+  operational complexity without meaningful benefit at this scale. Revisit if
+  the backend infrastructure needs to share this stack.
+
+  Region: us-east-1 (N. Virginia).
+  CloudFront is a global service but its associated ACM certificates and
+  some CloudFront APIs require us-east-1. Defaulting here avoids certificate
+  region mismatch issues if HTTPS with a custom domain is added later.
+  No other hint in the repo suggests a different region.
+
+# ---------------------------------------------------------------------------
+# Parameters
+# ---------------------------------------------------------------------------
+Parameters:
+  Environment:
+    Type: String
+    Default: prod
+    AllowedValues: [prod, staging]
+    Description: >
+      Logical environment name. Used as a suffix on the bucket name and as the
+      CloudFront distribution comment. Parameterised so a staging stack can be
+      deployed from the same template without any edits.
+
+  BucketNamePrefix:
+    Type: String
+    Default: kick-platform-frontend
+    Description: >
+      Prefix for the S3 bucket name. The final name will be
+      "<BucketNamePrefix>-<Environment>". Must be globally unique.
+      Override this if the default name is already taken in your account.
+
+  GitHubOrg:
+    Type: String
+    Default: EduardoMolinar
+    Description: GitHub organisation or user that owns the repository.
+
+  GitHubRepo:
+    Type: String
+    Default: kick-platform
+    Description: GitHub repository name (without the org prefix).
+
+  CreateOidcProvider:
+    Type: String
+    Default: "true"
+    AllowedValues: ["true", "false"]
+    Description: >
+      Set to "false" if the GitHub OIDC provider
+      (token.actions.githubusercontent.com) already exists in this AWS account.
+      Each account can only have one OIDC provider per issuer URL; attempting
+      to create a duplicate will cause a stack failure.
+
+# ---------------------------------------------------------------------------
+# Conditions
+# ---------------------------------------------------------------------------
+Conditions:
+  ShouldCreateOidcProvider: !Equals [!Ref CreateOidcProvider, "true"]
+
+# ---------------------------------------------------------------------------
+# Resources
+# ---------------------------------------------------------------------------
+Resources:
+
+  # -------------------------------------------------------------------------
+  # S3 — origin bucket
+  # -------------------------------------------------------------------------
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${BucketNamePrefix}-${Environment}"
+      # Versioning allows point-in-time rollback of individual objects if
+      # needed outside the normal workflow-tag-based rollback path.
+      VersioningConfiguration:
+        Status: Enabled
+      # Block all public access; CloudFront accesses the bucket via OAC only.
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      # Server-side encryption with the default S3-managed key (SSE-S3).
+      # Upgrade to SSE-KMS if CMK auditing is required.
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      Tags:
+        - Key: Project
+          Value: kick-platform
+        - Key: Environment
+          Value: !Ref Environment
+
+  # Bucket policy: allow CloudFront OAC to read objects.
+  # Deny every other principal (public access is already blocked above, but
+  # this explicit deny is belt-and-suspenders).
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowCloudFrontOAC
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub "arn:aws:s3:::${FrontendBucket}/*"
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}"
+
+  # -------------------------------------------------------------------------
+  # CloudFront — Origin Access Control
+  # -------------------------------------------------------------------------
+  # OAC is the modern replacement for OAI. It signs requests to S3 with
+  # SigV4 and does not require a special bucket ACL.
+  OriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub "kick-platform-frontend-oac-${Environment}"
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  # -------------------------------------------------------------------------
+  # CloudFront — Distribution
+  # -------------------------------------------------------------------------
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Comment: !Sub "kick-platform frontend (${Environment})"
+        Enabled: true
+        DefaultRootObject: index.html
+        HttpVersion: http2and3
+        PriceClass: PriceClass_100  # US, Canada, Europe — covers primary user base
+
+        Origins:
+          - Id: S3Origin
+            DomainName: !GetAtt FrontendBucket.RegionalDomainName
+            S3OriginConfig:
+              # Must be empty string when using OAC (not OAI).
+              OriginAccessIdentity: ""
+            OriginAccessControlId: !GetAtt OriginAccessControl.Id
+
+        # -----------------------------------------------------------------
+        # Cache Policies (referenced inline by each behavior below)
+        # -----------------------------------------------------------------
+        # We inline AWS managed policy IDs rather than defining custom
+        # AWS::CloudFront::CachePolicy resources, to keep the template minimal.
+        #
+        #   No-cache (entry files: index.html, federation.manifest.json,
+        #            importmap.json, remoteEntry.json):
+        #     AWS Managed "CachingDisabled" — 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+        #
+        #   Immutable (hashed JS/CSS, max-age=31536000):
+        #     AWS Managed "CachingOptimized" — 658327ea-f89d-4fab-a63d-7e88639e58f6
+        #
+        # -----------------------------------------------------------------
+        # Cache Behaviors (evaluated top-to-bottom, most-specific first)
+        # -----------------------------------------------------------------
+        CacheBehaviors:
+
+          # --- Shell entry files (no-cache) --------------------------------
+          - PathPattern: "/index.html"
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad  # CachingDisabled
+
+          - PathPattern: "/federation.manifest.json"
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad  # CachingDisabled
+
+          - PathPattern: "/importmap.json"
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad  # CachingDisabled
+
+          - PathPattern: "/remoteEntry.json"
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad  # CachingDisabled
+
+          # --- Per-remote remoteEntry.json (no-cache) ----------------------
+          # One behavior per remote keeps blast radius narrow: an invalidation
+          # for /remotes/mfe-home/remoteEntry.json does not touch other remotes.
+          - PathPattern: "/remotes/mfe-home/remoteEntry.json"
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad  # CachingDisabled
+
+          - PathPattern: "/remotes/mfe-live/remoteEntry.json"
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad  # CachingDisabled
+
+          - PathPattern: "/remotes/mfe-competition/remoteEntry.json"
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad  # CachingDisabled
+
+          - PathPattern: "/remotes/mfe-team/remoteEntry.json"
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad  # CachingDisabled
+
+          - PathPattern: "/remotes/mfe-profile/remoteEntry.json"
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad  # CachingDisabled
+
+          # --- All remote hashed assets (long-TTL immutable) ---------------
+          # /remotes/*/* catches all hashed JS/CSS under any remote prefix.
+          # The more-specific remoteEntry.json behaviors above take priority.
+          - PathPattern: "/remotes/*/*"
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            Compress: true
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # CachingOptimized (1 year)
+
+        # -----------------------------------------------------------------
+        # Default Cache Behavior — shell hashed assets (long-TTL immutable)
+        # -----------------------------------------------------------------
+        # Catches all shell hashed JS/CSS. The more-specific path behaviors
+        # above take priority for index.html and manifest files.
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          Compress: true
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # CachingOptimized (1 year)
+
+        # -----------------------------------------------------------------
+        # SPA fallback — 403/404 from S3 → /index.html with 200
+        # -----------------------------------------------------------------
+        # S3 returns 403 (not 404) for missing keys when bucket policy is
+        # OAC-only. Handling both ensures deep links work regardless.
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 0
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 0
+
+      Tags:
+        - Key: Project
+          Value: kick-platform
+        - Key: Environment
+          Value: !Ref Environment
+
+  # -------------------------------------------------------------------------
+  # IAM — GitHub OIDC Provider (conditional)
+  # -------------------------------------------------------------------------
+  GitHubOidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    Condition: ShouldCreateOidcProvider
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList:
+        - sts.amazonaws.com
+      # GitHub's current OIDC thumbprint. GitHub rotates this occasionally;
+      # if OIDC auth starts failing, update this value.
+      # Retrieve the current value with:
+      #   openssl s_client -servername token.actions.githubusercontent.com \
+      #     -connect token.actions.githubusercontent.com:443 < /dev/null 2>/dev/null \
+      #     | openssl x509 -fingerprint -noout -sha1
+      ThumbprintList:
+        - 6938fd4d98bab03faadb97b34396831e3780aea1
+        - 1c58a3a8518e8759bf075b76b750d4f2df264fcd
+
+  # -------------------------------------------------------------------------
+  # IAM — GitHub Actions deployment role
+  # -------------------------------------------------------------------------
+  GitHubActionsDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "kick-platform-github-deploy-${Environment}"
+      Description: >
+        Assumed by GitHub Actions via OIDC to deploy frontend assets to S3
+        and invalidate CloudFront. Scoped to the specific repository.
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: GitHubOidcTrust
+            Effect: Allow
+            Principal:
+              Federated: !If
+                - ShouldCreateOidcProvider
+                - !GetAtt GitHubOidcProvider.Arn
+                - !Sub "arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com"
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              StringLike:
+                # Scope to this repo only.
+                # The sub claim format is:
+                #   repo:<org>/<repo>:ref:refs/tags/<tag>      (tag push)
+                #   repo:<org>/<repo>:ref:refs/heads/<branch>  (branch push)
+                #   repo:<org>/<repo>:environment:<env>        (environment deployment)
+                # Using a wildcard on the ref portion covers all three trigger
+                # types (tag-based release, workflow_dispatch, future environments).
+                #
+                # Trade-off: a wildcard on the ref allows any branch/tag in this
+                # repo to assume the role when workflow_dispatch is used.
+                # For stricter control, replace the wildcard with a list of
+                # explicit ref patterns such as:
+                #   repo:EduardoMolinar/kick-platform:ref:refs/heads/main
+                # Release workflows trigger on push to main and workflow_dispatch.
+                # workflow_dispatch does not embed a ref in the sub claim the same
+                # way a branch push does, so the wildcard is the most compatible
+                # default. Tighten once deploy patterns are stable.
+                token.actions.githubusercontent.com:sub: !Sub "repo:${GitHubOrg}/${GitHubRepo}:*"
+
+      Policies:
+        - PolicyName: FrontendDeployPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              # S3 — write and list access on the frontend bucket only.
+              - Sid: S3PutDelete
+                Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource: !Sub "arn:aws:s3:::${FrontendBucket}/*"
+
+              - Sid: S3List
+                Effect: Allow
+                Action:
+                  - s3:ListBucket
+                Resource: !GetAtt FrontendBucket.Arn
+
+              # CloudFront — invalidation and read access on this distribution.
+              - Sid: CloudFrontInvalidate
+                Effect: Allow
+                Action:
+                  - cloudfront:CreateInvalidation
+                  - cloudfront:GetDistribution
+                Resource: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistribution}"
+
+      Tags:
+        - Key: Project
+          Value: kick-platform
+        - Key: Environment
+          Value: !Ref Environment
+
+# ---------------------------------------------------------------------------
+# Outputs — map directly to the three required GitHub repo secrets
+# ---------------------------------------------------------------------------
+Outputs:
+  # GitHub secret: AWS_ROLE_ARN
+  AwsRoleArn:
+    Description: >
+      ARN of the IAM role to set as the AWS_ROLE_ARN GitHub secret.
+      In GitHub: Settings > Secrets and variables > Actions > New repository secret.
+    Value: !GetAtt GitHubActionsDeployRole.Arn
+    Export:
+      Name: !Sub "kick-platform-frontend-${Environment}-role-arn"
+
+  # GitHub secret: S3_BUCKET
+  S3Bucket:
+    Description: >
+      S3 bucket name to set as the S3_BUCKET GitHub secret.
+    Value: !Ref FrontendBucket
+    Export:
+      Name: !Sub "kick-platform-frontend-${Environment}-bucket"
+
+  # GitHub secret: CLOUDFRONT_DISTRIBUTION_ID
+  CloudFrontDistributionId:
+    Description: >
+      CloudFront distribution ID to set as the CLOUDFRONT_DISTRIBUTION_ID GitHub secret.
+    Value: !Ref CloudFrontDistribution
+    Export:
+      Name: !Sub "kick-platform-frontend-${Environment}-cf-id"
+
+  # Informational — the CloudFront domain for DNS / browser testing.
+  CloudFrontDomainName:
+    Description: >
+      CloudFront domain name (e.g. d1234abcd.cloudfront.net).
+      Point a CNAME at this if you add a custom domain later.
+    Value: !GetAtt CloudFrontDistribution.DomainName
+    Export:
+      Name: !Sub "kick-platform-frontend-${Environment}-cf-domain"

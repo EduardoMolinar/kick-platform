@@ -1,0 +1,7 @@
+{
+  "mfe-home":        "/remotes/mfe-home/remoteEntry.json",
+  "mfe-live":        "/remotes/mfe-live/remoteEntry.json",
+  "mfe-competition": "/remotes/mfe-competition/remoteEntry.json",
+  "mfe-team":        "/remotes/mfe-team/remoteEntry.json",
+  "mfe-profile":     "/remotes/mfe-profile/remoteEntry.json"
+}
