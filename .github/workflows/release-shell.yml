@@ -99,6 +99,12 @@ jobs:
       # Also exclude federation.manifest.prod.json: it is an internal build
       # artifact that must never be served directly from CloudFront. Its
       # content is published to S3 as federation.manifest.json in the step below.
+      # CRITICAL: `--exclude "remotes/*"` is required because --delete is
+      # scoped to the destination prefix (the bucket root here). Without it,
+      # this sync would wipe every file under /remotes/* that the remote
+      # deploy jobs just uploaded, because none of them exist in the shell's
+      # browser dist. Each remote workflow handles its own --delete scoped
+      # to its own /remotes/<name>/ subtree.
       - name: Sync hashed assets (long-TTL, immutable)
         run: |
           aws s3 sync \
@@ -110,6 +116,7 @@ jobs:
             --exclude "federation.manifest.prod.json" \
             --exclude "importmap.json" \
             --exclude "remoteEntry.json" \
+            --exclude "remotes/*" \
             --delete
 
       # Upload cache-sensitive files individually with no-cache headers.
