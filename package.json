@@ -2,6 +2,10 @@
   "name": "@platform/root",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "scripts": {
     "dev": "nx run-many -t serve -p shell,mfe-home,mfe-live,mfe-competition,mfe-team,mfe-profile --parallel=6",
     "dev:remotes": "nx run-many -t serve -p mfe-home,mfe-live,mfe-competition,mfe-team,mfe-profile --parallel=5",
