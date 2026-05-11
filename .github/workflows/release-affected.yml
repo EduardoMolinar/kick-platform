@@ -132,12 +132,15 @@ jobs:
       fail-fast: false   # one remote failure does not block siblings
 
     # The reusable workflow's build-and-deploy job declares `environment: prod`
-    # internally, which is what makes the env-scoped secrets available. We
-    # cannot declare `environment:` here because GitHub Actions does not
-    # support it on jobs that call a reusable workflow.
+    # internally — that is where env-scoped secrets are resolved.
+    # `secrets: inherit` is still required even though we don't have env
+    # access here: it is what enables the secrets context to flow into the
+    # called workflow at all. Without it the reusable workflow gets no
+    # secrets context and its `environment:` lookup returns nothing.
     uses: ./.github/workflows/_deploy-remote.yml
     with:
       remote: ${{ matrix.remote }}
+    secrets: inherit
 
   # ─────────────────────────────────────────────────────────────────────────────
   # Job 3: deploy shell — only after remotes complete (or are skipped)
@@ -163,3 +166,4 @@ jobs:
       (needs.deploy-remotes.result == 'success' || needs.deploy-remotes.result == 'skipped')
 
     uses: ./.github/workflows/release-shell.yml
+    secrets: inherit

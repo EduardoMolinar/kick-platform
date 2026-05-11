@@ -48,12 +48,13 @@ jobs:
           - mfe-profile
       fail-fast: false   # one remote failure does not block siblings
 
-    # The reusable workflow's build-and-deploy job declares `environment: prod`
-    # internally — that is where the env-scoped secrets become available.
-    # `environment:` is not a valid key on a job that calls a reusable workflow.
+    # `environment: prod` is on the reusable workflow's job (not allowed here).
+    # `secrets: inherit` enables the secrets context to flow into the called
+    # workflow so its `environment:` declaration can resolve env-scoped secrets.
     uses: ./.github/workflows/_deploy-remote.yml
     with:
       remote: ${{ matrix.remote }}
+    secrets: inherit
 
   # ─────────────────────────────────────────────────────────────────────────────
   # Job 2: deploy shell after all remotes complete
@@ -64,3 +65,4 @@ jobs:
     if: "!cancelled() && !failure()"
 
     uses: ./.github/workflows/release-shell.yml
+    secrets: inherit
