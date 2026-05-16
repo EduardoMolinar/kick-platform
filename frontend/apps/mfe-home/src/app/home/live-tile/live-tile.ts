@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import type { MatchSummary } from '@platform/shared-types';
 
 @Component({
   selector: 'mfe-home-live-tile',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './live-tile.html',
   styleUrl: './live-tile.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

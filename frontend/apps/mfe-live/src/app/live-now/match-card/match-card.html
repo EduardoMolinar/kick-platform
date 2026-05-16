@@ -1,4 +1,8 @@
-<article [class]="cardClasses" [attr.aria-label]="'Match: ' + match.home.team.name + ' vs ' + match.away.team.name">
+<a
+  [class]="cardClasses"
+  [routerLink]="['/live', match.id]"
+  [attr.aria-label]="'Match: ' + match.home.team.name + ' vs ' + match.away.team.name"
+>
   <header class="match-card__header">
     <span class="match-card__competition">{{ match.competition.code }}</span>
     <span class="match-card__status">
@@ -17,7 +21,7 @@
         class="match-card__follow"
         [class.match-card__follow--active]="homeFollowing"
         [attr.aria-pressed]="homeFollowing"
-        (click)="homeFollowToggle.emit()"
+        (click)="onFollowClick($event, homeFollowToggle)"
       >{{ homeFollowing ? 'Following' : 'Follow' }}</button>
       <span
         class="match-card__score"
@@ -31,7 +35,7 @@
         class="match-card__follow"
         [class.match-card__follow--active]="awayFollowing"
         [attr.aria-pressed]="awayFollowing"
-        (click)="awayFollowToggle.emit()"
+        (click)="onFollowClick($event, awayFollowToggle)"
       >{{ awayFollowing ? 'Following' : 'Follow' }}</button>
       <span
         class="match-card__score"
@@ -39,4 +43,4 @@
       >{{ match.away.score }}</span>
     </div>
   </div>
-</article>
+</a>

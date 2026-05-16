@@ -1,0 +1,6 @@
+# Runtime dependencies for the Lambda bundle.
+# Kept in sync with pyproject.toml [project] dependencies — CDK's PythonFunction
+# reads this file to install deps via Docker bundling.
+aws-lambda-powertools[tracer]>=3.0,<4
+boto3>=1.34,<2
+httpx>=0.27,<1

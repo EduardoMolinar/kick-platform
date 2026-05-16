@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import type { MatchSummary } from '@platform/shared-types';
 import { LiveTile } from './live-tile';
 
@@ -16,7 +17,10 @@ describe('LiveTile', () => {
   let fixture: ComponentFixture<LiveTile>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ imports: [LiveTile] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [LiveTile],
+      providers: [provideRouter([])],
+    }).compileComponents();
     fixture = TestBed.createComponent(LiveTile);
     fixture.componentRef.setInput('match', baseMatch);
     fixture.detectChanges();
@@ -42,16 +46,16 @@ describe('LiveTile', () => {
     expect(text).toContain('HALF TIME');
   });
 
-  it('applies the competition-keyed class', () => {
-    const article = fixture.nativeElement.querySelector('article');
-    expect(article.className).toContain('live-tile--pl');
+  it('applies the competition-keyed class on the root link', () => {
+    const root = fixture.nativeElement.querySelector('a.live-tile');
+    expect(root.className).toContain('live-tile--pl');
   });
 
   it('applies the featured class when [featured]=true', () => {
     fixture.componentRef.setInput('featured', true);
     fixture.detectChanges();
-    const article = fixture.nativeElement.querySelector('article');
-    expect(article.className).toContain('live-tile--featured');
+    const root = fixture.nativeElement.querySelector('a.live-tile');
+    expect(root.className).toContain('live-tile--featured');
   });
 
   it('renders the hero layout (team-name elements) when featured', () => {
@@ -59,5 +63,10 @@ describe('LiveTile', () => {
     fixture.detectChanges();
     const heroNames = fixture.nativeElement.querySelectorAll('.live-tile__team-name');
     expect(heroNames.length).toBe(2);
+  });
+
+  it('links to /live/<matchId>', () => {
+    const root: HTMLAnchorElement = fixture.nativeElement.querySelector('a.live-tile');
+    expect(root.getAttribute('href')).toBe('/live/m-test');
   });
 });

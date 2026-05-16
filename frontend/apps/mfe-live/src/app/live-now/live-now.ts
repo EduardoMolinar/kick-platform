@@ -8,12 +8,18 @@ import {
   combineLatest,
   filter,
   firstValueFrom,
+  interval,
   map,
   of,
+  startWith,
   switchMap,
   type Observable,
 } from 'rxjs';
 import { MatchCard } from './match-card/match-card';
+
+/** Live-match poll interval. Mock data is static but the polling mechanism is
+ * exercised here so the real backend swap is a single line change. */
+const LIVE_POLL_MS = 30_000;
 
 interface MatchWithFollowing {
   match: MatchSummary;
@@ -44,9 +50,16 @@ export class LiveNow {
     filter((u): u is AuthSession => u !== null)
   );
 
+  /** Polls live matches every LIVE_POLL_MS. `startWith(0)` makes the first
+   * emission synchronous so the page paints immediately on mount. */
+  private readonly liveMatches$: Observable<readonly MatchSummary[]> = interval(LIVE_POLL_MS).pipe(
+    startWith(0),
+    switchMap(() => this.sportsData.getLiveMatches())
+  );
+
   protected readonly vm$: Observable<LiveNowVm> = combineLatest([
     this.user$,
-    this.sportsData.getLiveMatches(),
+    this.liveMatches$,
   ]).pipe(
     switchMap(([user, matches]) => {
       if (matches.length === 0) {

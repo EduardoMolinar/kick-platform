@@ -6,7 +6,8 @@
     "dev": "nx run-many -t serve -p shell,mfe-home,mfe-live,mfe-competition,mfe-team,mfe-profile --parallel=6",
     "dev:remotes": "nx run-many -t serve -p mfe-home,mfe-live,mfe-competition,mfe-team,mfe-profile --parallel=5",
     "dev:shell": "nx serve shell",
-    "dev:storybook": "nx storybook design-system"
+    "dev:storybook": "nx storybook design-system",
+    "postinstall": "node scripts/install-oxc-binding.cjs"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~20.3.0",

@@ -9,6 +9,13 @@ export const LIVE_MATCHES_FIXTURE: readonly MatchSummary[] = [
     away: { team: { id: 't-mci', name: 'Manchester City', shortName: 'MCI' }, score: 1 },
     kickoffAt: '2026-04-22T19:00:00Z',
     minute: 67,
+    events: [
+      { minute: 23, type: 'goal', side: 'home', player: 'K. Mbappé', assist: 'J. Bellingham' },
+      { minute: 31, type: 'yellow-card', side: 'away', player: 'R. Dias' },
+      { minute: 41, type: 'goal', side: 'away', player: 'E. Haaland', assist: 'K. De Bruyne' },
+      { minute: 58, type: 'yellow-card', side: 'away', player: 'Rodri' },
+      { minute: 64, type: 'substitution', side: 'home', player: 'F. Valverde', playerOut: 'L. Modrić' },
+    ],
   },
   {
     id: 'm-pl-014',
@@ -18,6 +25,12 @@ export const LIVE_MATCHES_FIXTURE: readonly MatchSummary[] = [
     away: { team: { id: 't-liv', name: 'Liverpool', shortName: 'LIV' }, score: 0 },
     kickoffAt: '2026-04-22T18:30:00Z',
     minute: 54,
+    events: [
+      { minute: 18, type: 'goal', side: 'home', player: 'B. Saka', assist: 'M. Ødegaard' },
+      { minute: 26, type: 'yellow-card', side: 'away', player: 'V. van Dijk' },
+      { minute: 47, type: 'goal', side: 'home', player: 'K. Havertz' },
+      { minute: 52, type: 'substitution', side: 'away', player: 'D. Núñez', playerOut: 'C. Gakpo' },
+    ],
   },
   {
     id: 'm-pl-015',
@@ -27,6 +40,10 @@ export const LIVE_MATCHES_FIXTURE: readonly MatchSummary[] = [
     away: { team: { id: 't-tot', name: 'Tottenham', shortName: 'TOT' }, score: 0 },
     kickoffAt: '2026-04-22T18:45:00Z',
     minute: 45,
+    events: [
+      { minute: 12, type: 'yellow-card', side: 'home', player: 'M. Caicedo' },
+      { minute: 33, type: 'yellow-card', side: 'away', player: 'C. Romero' },
+    ],
   },
   {
     id: 'm-liga-007',
@@ -36,6 +53,14 @@ export const LIVE_MATCHES_FIXTURE: readonly MatchSummary[] = [
     away: { team: { id: 't-atl', name: 'Atlético Madrid', shortName: 'ATM' }, score: 2 },
     kickoffAt: '2026-04-22T19:15:00Z',
     minute: 72,
+    events: [
+      { minute: 8, type: 'goal', side: 'home', player: 'R. Lewandowski', assist: 'L. Yamal' },
+      { minute: 21, type: 'goal', side: 'away', player: 'A. Griezmann' },
+      { minute: 34, type: 'goal', side: 'home', player: 'L. Yamal' },
+      { minute: 49, type: 'goal', side: 'away', player: 'Á. Morata', assist: 'K. Llorente' },
+      { minute: 66, type: 'goal', side: 'home', player: 'F. de Jong', assist: 'P. Cubarsí' },
+      { minute: 70, type: 'yellow-card', side: 'away', player: 'J. Giménez' },
+    ],
   },
   {
     id: 'm-int-003',
@@ -45,5 +70,9 @@ export const LIVE_MATCHES_FIXTURE: readonly MatchSummary[] = [
     away: { team: { id: 't-arg', name: 'Argentina', shortName: 'ARG' }, score: 1 },
     kickoffAt: '2026-04-22T20:00:00Z',
     minute: 31,
+    events: [
+      { minute: 14, type: 'goal', side: 'away', player: 'L. Messi', assist: 'Á. Di María' },
+      { minute: 27, type: 'yellow-card', side: 'home', player: 'Casemiro' },
+    ],
   },
 ];

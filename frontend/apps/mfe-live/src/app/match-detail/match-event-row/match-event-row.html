@@ -1,0 +1,23 @@
+<div
+  class="event-row"
+  [class.event-row--home]="event.side === 'home'"
+  [class.event-row--away]="event.side === 'away'"
+  [class.event-row--goal]="event.type === 'goal'"
+  [class.event-row--yellow]="event.type === 'yellow-card'"
+  [class.event-row--red]="event.type === 'red-card'"
+  [class.event-row--sub]="event.type === 'substitution'"
+  [attr.aria-label]="typeLabel + ' at ' + minuteLabel + ' for ' + event.side + ' side, ' + event.player"
+>
+  <span class="event-row__minute">{{ minuteLabel }}</span>
+  <span class="event-row__icon" aria-hidden="true">{{ iconLabel }}</span>
+  <div class="event-row__body">
+    <span class="event-row__player">{{ event.player }}</span>
+    @if (event.type === 'goal' && event.assist) {
+      <span class="event-row__meta">assist: {{ event.assist }}</span>
+    }
+    @if (event.type === 'substitution' && event.playerOut) {
+      <span class="event-row__meta">on for {{ event.playerOut }}</span>
+    }
+  </div>
+  <span class="event-row__side">{{ event.side === 'home' ? 'H' : 'A' }}</span>
+</div>
