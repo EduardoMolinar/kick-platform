@@ -1,5 +1,5 @@
 @if (featured) {
-  <article [class]="tileClasses">
+  <a [class]="tileClasses" [routerLink]="['/live', match.id]">
     <header class="live-tile__top">
       <span class="live-tile__comp">
         {{ match.competition.name }}
@@ -35,9 +35,9 @@
         <span class="live-tile__team-name">{{ match.away.team.name }}</span>
       </div>
     </div>
-  </article>
+  </a>
 } @else {
-  <article [class]="tileClasses">
+  <a [class]="tileClasses" [routerLink]="['/live', match.id]">
     <header class="live-tile__header">
       <span class="live-tile__competition">{{ match.competition.code }}</span>
       <span class="live-tile__status">
@@ -62,5 +62,5 @@
         <span class="live-tile__row-score" [class.live-tile__row-score--leading]="match.away.score > match.home.score">{{ match.away.score }}</span>
       </div>
     </div>
-  </article>
+  </a>
 }

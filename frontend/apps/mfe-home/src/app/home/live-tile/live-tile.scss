@@ -5,6 +5,9 @@
 /* === BASE TILE === */
 .live-tile {
   position: relative;
+  display: block;
+  text-decoration: none;
+  color: inherit;
   background: var(--surface-1);
   border: 1px solid var(--border);
   border-radius: var(--ds-radius-md);
@@ -13,6 +16,11 @@
   transition:
     border-color var(--ds-duration-fast) var(--ds-easing-standard),
     transform var(--ds-duration-fast) var(--ds-easing-standard);
+}
+
+.live-tile:focus-visible {
+  outline: 2px solid var(--brand-strong);
+  outline-offset: 2px;
 }
 
 .live-tile:hover {

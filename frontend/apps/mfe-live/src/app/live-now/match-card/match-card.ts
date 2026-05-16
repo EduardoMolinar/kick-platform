@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import type { MatchSummary } from '@platform/shared-types';
 
 @Component({
   selector: 'mfe-live-match-card',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './match-card.html',
   styleUrl: './match-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,5 +42,12 @@ export class MatchCard {
 
   protected get isLive(): boolean {
     return this.match.status === 'live';
+  }
+
+  /** Stop click propagation so follow button clicks don't trigger the card-level link. */
+  protected onFollowClick(event: Event, emitter: EventEmitter<void>): void {
+    event.stopPropagation();
+    event.preventDefault();
+    emitter.emit();
   }
 }

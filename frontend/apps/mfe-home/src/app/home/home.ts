@@ -6,9 +6,12 @@ import { DsCard, DsList, DsListItem } from '@platform/design-system';
 import { PROFILE_SERVICE } from '@platform/profile';
 import type { Competition, Fixture, MatchSummary, Team } from '@platform/shared-types';
 import { SPORTS_DATA_SERVICE } from '@platform/sports-data';
-import { combineLatest, filter, map, of, shareReplay, switchMap, type Observable } from 'rxjs';
+import { combineLatest, filter, interval, map, of, shareReplay, startWith, switchMap, type Observable } from 'rxjs';
 import { FixtureTile } from './fixture-tile/fixture-tile';
 import { LiveTile } from './live-tile/live-tile';
+
+/** Live-match poll interval for the home dashboard. Mirrors mfe-live's value. */
+const LIVE_POLL_MS = 30_000;
 
 interface HomeVm {
   readonly user: AuthSession;
@@ -64,7 +67,11 @@ export class Home {
   ): Observable<readonly MatchSummary[]> {
     const teamIds = new Set(teams.map((t) => t.id));
     const competitionIds = new Set(competitions.map((c) => c.id));
-    return this.sportsData.getLiveMatches().pipe(
+    // Poll every LIVE_POLL_MS so the home dashboard's live section refreshes.
+    // startWith(0) keeps the first emission synchronous for immediate paint.
+    return interval(LIVE_POLL_MS).pipe(
+      startWith(0),
+      switchMap(() => this.sportsData.getLiveMatches()),
       map((matches) =>
         matches.filter(
           (m) =>

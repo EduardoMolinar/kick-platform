@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { AUTH_SERVICE, type AuthService } from '@platform/auth';
 import { PROFILE_SERVICE, type ProfileService } from '@platform/profile';
 import type { MatchSummary } from '@platform/shared-types';
@@ -61,6 +62,7 @@ async function setup(
   await TestBed.configureTestingModule({
     imports: [LiveNow],
     providers: [
+      provideRouter([]),
       { provide: SPORTS_DATA_SERVICE, useValue: sportsStub },
       { provide: AUTH_SERVICE, useValue: makeAuthStub() },
       { provide: PROFILE_SERVICE, useValue: profileStub },

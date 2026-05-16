@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import type { MatchSummary } from '@platform/shared-types';
 import { MatchCard } from './match-card';
 
@@ -16,7 +17,10 @@ describe('MatchCard', () => {
   let fixture: ComponentFixture<MatchCard>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ imports: [MatchCard] }).compileComponents();
+    await TestBed.configureTestingModule({
+      imports: [MatchCard],
+      providers: [provideRouter([])],
+    }).compileComponents();
     fixture = TestBed.createComponent(MatchCard);
     fixture.componentRef.setInput('match', baseMatch);
     fixture.detectChanges();
@@ -49,16 +53,21 @@ describe('MatchCard', () => {
     expect(text).toContain('FULL TIME');
   });
 
-  it('applies the competition-keyed class', () => {
-    const article = fixture.nativeElement.querySelector('article');
-    expect(article.className).toContain('match-card--pl');
+  it('applies the competition-keyed class on the root link', () => {
+    const root = fixture.nativeElement.querySelector('a.match-card');
+    expect(root.className).toContain('match-card--pl');
   });
 
   it('applies the featured class when [featured]=true', () => {
     fixture.componentRef.setInput('featured', true);
     fixture.detectChanges();
-    const article = fixture.nativeElement.querySelector('article');
-    expect(article.className).toContain('match-card--featured');
+    const root = fixture.nativeElement.querySelector('a.match-card');
+    expect(root.className).toContain('match-card--featured');
+  });
+
+  it('links the card to /live/<matchId>', () => {
+    const root: HTMLAnchorElement = fixture.nativeElement.querySelector('a.match-card');
+    expect(root.getAttribute('href')).toBe('/live/m-test');
   });
 
   it('shows Follow buttons for both teams by default', () => {

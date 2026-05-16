@@ -1,5 +1,5 @@
 import { Competition, Team } from './shared-types';
-import { MatchSummary } from './match';
+import { MatchEvent, MatchSummary } from './match';
 import { Fixture } from './fixture';
 import { Standing, StandingRow } from './standings';
 import { TeamCompetitionStanding } from './team-standing';
@@ -83,5 +83,24 @@ describe('shared-types', () => {
     };
     expect(entry.row.position).toBe(2);
     expect(entry.competition.code).toBe('PL');
+  });
+
+  it('should accept a valid MatchEvent shape', () => {
+    const goal: MatchEvent = {
+      minute: 23,
+      type: 'goal',
+      side: 'home',
+      player: 'K. Mbappé',
+      assist: 'J. Bellingham',
+    };
+    const sub: MatchEvent = {
+      minute: 75,
+      type: 'substitution',
+      side: 'away',
+      player: 'J. Doku',
+      playerOut: 'P. Foden',
+    };
+    expect(goal.type).toBe('goal');
+    expect(sub.playerOut).toBe('P. Foden');
   });
 });

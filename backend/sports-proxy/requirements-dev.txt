@@ -1,0 +1,6 @@
+# Dev / CI dependencies. Installs runtime deps via -r as well.
+-r requirements.txt
+pytest>=8,<9
+moto[dynamodb,ssm]>=5,<6
+ruff>=0.6,<1
+mypy>=1.10,<2

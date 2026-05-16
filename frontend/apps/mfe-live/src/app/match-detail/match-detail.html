@@ -1,0 +1,57 @@
+<section class="match-detail">
+  @if (vm$ | async; as vm) {
+    @if (vm.match; as match) {
+      <header
+        [class]="'match-detail__header ' + compClass(match)"
+      >
+        <a routerLink="/live" class="match-detail__back">← All live</a>
+        <div class="match-detail__top">
+          <span class="match-detail__comp">
+            {{ match.competition.name }}
+          </span>
+          <span class="match-detail__status">
+            @if (isLive(match)) {
+              <span class="match-detail__pulse"></span>
+            }
+            {{ statusLabel(match) }}
+          </span>
+        </div>
+        <div class="match-detail__hero">
+          <div class="match-detail__team">
+            <span class="match-detail__team-short">{{ match.home.team.shortName ?? match.home.team.name }}</span>
+            <span class="match-detail__team-name">{{ match.home.team.name }}</span>
+          </div>
+          <div class="match-detail__score">
+            <span [class.match-detail__score-leading]="match.home.score > match.away.score">{{ match.home.score }}</span>
+            <span class="match-detail__score-divider">/</span>
+            <span [class.match-detail__score-leading]="match.away.score > match.home.score">{{ match.away.score }}</span>
+          </div>
+          <div class="match-detail__team match-detail__team--away">
+            <span class="match-detail__team-short">{{ match.away.team.shortName ?? match.away.team.name }}</span>
+            <span class="match-detail__team-name">{{ match.away.team.name }}</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="match-detail__block">
+        <h2 class="match-detail__heading">Events</h2>
+        @if (vm.events.length > 0) {
+          <ul class="match-detail__events">
+            @for (event of vm.events; track event.minute + '-' + event.type + '-' + event.player) {
+              <li>
+                <mfe-live-match-event-row [event]="event" />
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="match-detail__empty">No events yet.</p>
+        }
+      </section>
+    } @else {
+      <header class="match-detail__header">
+        <a routerLink="/live" class="match-detail__back">← All live</a>
+        <p class="match-detail__not-found">Match <code>{{ vm.matchId }}</code> not found.</p>
+      </header>
+    }
+  }
+</section>

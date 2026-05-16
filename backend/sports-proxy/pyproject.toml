@@ -1,0 +1,52 @@
+[project]
+name = "sports-proxy"
+version = "0.1.0"
+description = "AWS Lambda that proxies API-Football for the Pitch frontend"
+requires-python = ">=3.12"
+readme = "README.md"
+license = { text = "UNLICENSED" }
+
+# Runtime dependencies — installed into the Lambda bundle by CDK.
+# Pinned majors; bump deliberately.
+dependencies = [
+    # The 'parameters' utility is in the base package as of v3 — no extra needed.
+    "aws-lambda-powertools[tracer]>=3.0,<4",
+    "boto3>=1.34,<2",
+    "httpx>=0.27,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<9",
+    "moto[dynamodb,ssm]>=5,<6",
+    "ruff>=0.6,<1",
+    "mypy>=1.10,<2",
+    "types-requests",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+ignore = []
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = ["src"]
+packages = ["sports_proxy"]

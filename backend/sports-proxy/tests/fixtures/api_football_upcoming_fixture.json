@@ -1,0 +1,17 @@
+{
+  "fixture": {
+    "id": 67890,
+    "date": "2026-05-01T18:30:00+00:00",
+    "status": { "long": "Not Started", "short": "NS", "elapsed": null }
+  },
+  "league": {
+    "id": 39,
+    "name": "Premier League",
+    "country": "England",
+    "round": "Regular Season - 35"
+  },
+  "teams": {
+    "home": { "id": 42, "name": "Arsenal" },
+    "away": { "id": 49, "name": "Chelsea" }
+  }
+}
